@@ -13,305 +13,146 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-    body { font-family: 'Noto Sans TC', sans-serif; overflow-x: hidden; }
-    ::-webkit-scrollbar { width: 3px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #C4A882; border-radius: 2px; }
-
-    @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
-    @keyframes fadeUp {
-      from { opacity:0; transform:translateY(24px); }
-      to   { opacity:1; transform:translateY(0); }
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      overflow-x: hidden;
+      color: #3F3160;
+      background:
+        linear-gradient(180deg,
+          #D8E5F5 0%,
+          #E6D5EC 22%,
+          #F2D2DC 45%,
+          #F8C6B3 68%,
+          #F4B5A3 88%,
+          #E6BFD4 100%
+        );
+      background-attachment: fixed;
+      min-height: 100vh;
     }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(184,157,217,0.5); border-radius: 3px; }
   </style>
 </head>
 <body>
-
-<!-- SVG watercolor filters — only used on decorative blobs, NOT on buttons/cards -->
-<svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
-  <defs>
-    <filter id="wc-decor" x="-30%" y="-30%" width="160%" height="160%">
-      <feTurbulence type="turbulence" baseFrequency="0.018 0.025" numOctaves="4" seed="8" result="noise"/>
-      <feDisplacementMap in="SourceGraphic" in2="noise" scale="28" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
-      <feGaussianBlur in="displaced" stdDeviation="7"/>
-    </filter>
-    <filter id="wc-decor2" x="-30%" y="-30%" width="160%" height="160%">
-      <feTurbulence type="turbulence" baseFrequency="0.022 0.018" numOctaves="4" seed="23" result="noise"/>
-      <feDisplacementMap in="SourceGraphic" in2="noise" scale="22" xChannelSelector="G" yChannelSelector="R" result="displaced"/>
-      <feGaussianBlur in="displaced" stdDeviation="10"/>
-    </filter>
-    <filter id="wc-decor3" x="-30%" y="-30%" width="160%" height="160%">
-      <feTurbulence type="turbulence" baseFrequency="0.015 0.03" numOctaves="3" seed="47" result="noise"/>
-      <feDisplacementMap in="SourceGraphic" in2="noise" scale="35" xChannelSelector="R" yChannelSelector="B" result="displaced"/>
-      <feGaussianBlur in="displaced" stdDeviation="14"/>
-    </filter>
-  </defs>
-</svg>
 
 <div id="root"></div>
 
 <script type="text/babel">
 const { useState, useEffect, useRef } = React;
 
-/* ─── THEMES ─────────────────────────────────────────── */
-const THEMES = {
-  washi: {
-    bg:"#F6F0E6", bgDeep:"#EDE4D4",
-    text:"#2A1F10", textMuted:"#7A6850",
-    primary:"#8C1A1A", accent:"#C4A882", accentLight:"#DDD0B8",
-    navBg:"rgba(246,240,230,0.92)", cardBg:"rgba(255,252,246,0.85)",
-    blob1:"rgba(140,26,26,0.13)", blob2:"rgba(196,168,130,0.25)", blob3:"rgba(140,26,26,0.08)",
-    divider:"rgba(42,31,16,0.10)",
-    introBg:"#0E0A06", introGrid:"rgba(196,168,130,0.12)", introAccent:"#C4A882",
-  },
-  sumi: {
-    bg:"#141008", bgDeep:"#1E1610",
-    text:"#F0E8D8", textMuted:"#9A8870",
-    primary:"#D45050", accent:"#C4A882", accentLight:"#6A5840",
-    navBg:"rgba(20,16,8,0.92)", cardBg:"rgba(30,22,14,0.85)",
-    blob1:"rgba(212,80,80,0.18)", blob2:"rgba(196,168,130,0.16)", blob3:"rgba(212,80,80,0.10)",
-    divider:"rgba(240,232,216,0.08)",
-    introBg:"#0E0A06", introGrid:"rgba(212,80,80,0.10)", introAccent:"#D45050",
-  },
+/* ─── MONUMENT VALLEY THEME ──────────────────────────── */
+const THEME = {
+  // Text
+  text:       "#3F3160",        // deep plum
+  textSoft:   "#5D4E8F",
+  textMuted:  "#8E80B8",        // lavender muted
+  // Brand colors
+  coral:      "#E89F8C",        // peach/coral architecture
+  pink:       "#F4B5C8",        // soft pink
+  lavender:   "#B89DD9",        // lavender accents
+  sky:        "#A8C4E8",        // sky blue
+  cream:      "#FFE8C8",        // golden highlight
+  deepPurple: "#7B6BA8",        // shadow purple
+  // Surfaces
+  surfaceLight: "rgba(255, 248, 240, 0.55)",   // frosted cream
+  surfaceCard:  "rgba(255, 244, 235, 0.7)",
+  navBg:        "rgba(255, 240, 235, 0.6)",
+  divider:      "rgba(125, 100, 168, 0.18)",
+  // Section tints (overlays on top of body gradient)
+  tintHero:     "linear-gradient(180deg, rgba(216,229,245,0.0) 0%, rgba(230,213,236,0.0) 100%)",
+  tintAbout:    "linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,240,250,0.22) 100%)",
+  tintResume:   "linear-gradient(180deg, rgba(255,248,240,0.30) 0%, rgba(255,235,225,0.30) 100%)",
+  tintWork:     "linear-gradient(180deg, rgba(244,181,200,0.18) 0%, rgba(184,157,217,0.14) 100%)",
+  tintBlog:     "linear-gradient(180deg, rgba(255,232,200,0.28) 0%, rgba(244,181,163,0.20) 100%)",
 };
 
 const FONT_H    = "'Space Grotesk', sans-serif";
 const FONT_BODY = "'Noto Sans TC', sans-serif";
 const FONT_MONO = "'Space Mono', monospace";
 
-/* ─── WATERCOLOR DECORATIONS ─────────────────────────── */
-function WcSplash({ style, theme, variant = 0 }) {
-  const sets = [
-    [[120,100,90,70,theme.blob1,"wc-decor"],[200,160,60,50,theme.blob2,"wc-decor2"],[80,190,50,40,theme.blob3,"wc-decor3"]],
-    [[80,80,70,55,theme.blob2,"wc-decor2"],[160,130,80,60,theme.blob1,"wc-decor"],[200,60,40,35,theme.blob3,"wc-decor3"]],
-    [[100,120,100,75,theme.blob1,"wc-decor3"],[60,60,55,45,theme.blob2,"wc-decor"]],
-  ];
-  const s = sets[variant % sets.length];
+/* ─── ISOMETRIC TOWER (decorative SVG) ───────────────── */
+function MvTower({ style, opacity = 1 }) {
   return (
-    <svg style={{ position:"absolute", pointerEvents:"none", ...style }} viewBox="0 0 280 240" xmlns="http://www.w3.org/2000/svg">
-      {s.map(([x,y,rx,ry,color,f],i) => (
-        <ellipse key={i} cx={x} cy={y} rx={rx} ry={ry} fill={color} filter={`url(#${f})`} />
-      ))}
+    <svg style={{ position:"absolute", pointerEvents:"none", opacity, ...style }} viewBox="0 0 220 280" xmlns="http://www.w3.org/2000/svg">
+      {/* Soft shadow under tower */}
+      <ellipse cx="110" cy="265" rx="80" ry="8" fill="#B89DD9" opacity="0.25"/>
+
+      {/* Base block */}
+      <polygon points="40,220 110,255 180,220 110,185" fill="#E89F8C"/>
+      <polygon points="40,220 110,255 110,185" fill="#D88B7A" opacity="0.7"/>
+      <polygon points="180,220 110,255 110,185" fill="#F4B5A3"/>
+
+      {/* Mid section */}
+      <polygon points="55,180 110,205 165,180 110,155" fill="#F4B5C8"/>
+      <polygon points="55,180 110,205 110,155" fill="#E89BB0" opacity="0.7"/>
+      <polygon points="165,180 110,205 110,155" fill="#F8C5D4"/>
+
+      {/* Upper block */}
+      <polygon points="70,140 110,160 150,140 110,120" fill="#B89DD9"/>
+      <polygon points="70,140 110,160 110,120" fill="#9B82C2" opacity="0.7"/>
+      <polygon points="150,140 110,160 110,120" fill="#CCB3E5"/>
+
+      {/* Top tower */}
+      <polygon points="85,105 110,118 135,105 110,92" fill="#FFE8C8"/>
+      <polygon points="85,105 110,118 110,92" fill="#F0D4A8" opacity="0.7"/>
+      <polygon points="135,105 110,118 110,92" fill="#FFF2DB"/>
+
+      {/* Pagoda roof */}
+      <polygon points="92,92 110,72 128,92" fill="#7B6BA8"/>
+      <polygon points="95,72 110,55 125,72" fill="#5D4E8F"/>
+
+      {/* Cherry tree silhouette */}
+      <circle cx="78" cy="92" r="10" fill="#F4B5C8" opacity="0.85"/>
+      <line x1="78" y1="92" x2="78" y2="105" stroke="#7B6BA8" strokeWidth="1.2"/>
     </svg>
   );
 }
 
-/* ─── INTRO ANIMATION ────────────────────────────────── */
-function IntroAnimation({ theme, onDone }) {
-  const canvasRef  = useRef(null);
-  const mouseRef   = useRef({ x: -9999, y: -9999 });
-  const runningRef = useRef(true);
-  const [phase,   setPhase]   = useState("particles");
-  const [typed,   setTyped]   = useState("");
-  const [visible, setVisible] = useState(true);
-  const TARGET = "JEAN CHUNG";
-
-  const COL1 = theme.introAccent;
-  const COL2 = theme.primary || "#D45050";
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    let raf;
-
-    function resize() {
-      canvas.width  = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    resize();
-    window.addEventListener("resize", resize);
-
-    const N = Math.min(Math.floor((canvas.width * canvas.height) / 14000), 100);
-    const particles = Array.from({ length: N }, () => {
-      const useCol2 = Math.random() < 0.35;
-      return {
-        x:  Math.random() * canvas.width,
-        y:  Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.7,
-        vy: (Math.random() - 0.5) * 0.7,
-        r:  Math.random() * 2.5 + 1,
-        color: useCol2 ? COL2 : COL1,
-        alpha: Math.random() * 0.5 + 0.5,
-        pulse: Math.random() * Math.PI * 2,
-      };
-    });
-
-    const LINK_DIST   = 130;
-    const MOUSE_DIST  = 120;
-    const MOUSE_FORCE = 2.5;
-
-    function draw() {
-      const W = canvas.width, H = canvas.height;
-      ctx.clearRect(0, 0, W, H);
-      const mx = mouseRef.current.x;
-      const my = mouseRef.current.y;
-
-      particles.forEach(p => {
-        p.pulse += 0.025;
-        const glowPulse = 0.7 + 0.3 * Math.sin(p.pulse);
-        const dx = p.x - mx, dy = p.y - my;
-        const dist = Math.sqrt(dx*dx + dy*dy);
-        if (dist < MOUSE_DIST && dist > 0.1) {
-          const force = (MOUSE_DIST - dist) / MOUSE_DIST * MOUSE_FORCE;
-          p.vx += (dx / dist) * force * 0.04;
-          p.vy += (dy / dist) * force * 0.04;
-        }
-        p.vx *= 0.985; p.vy *= 0.985;
-        p.x  += p.vx;  p.y  += p.vy;
-        if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
-        if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
-
-        ctx.save();
-        ctx.globalAlpha = p.alpha * glowPulse;
-        ctx.shadowBlur  = 16 * glowPulse;
-        ctx.shadowColor = p.color;
-        ctx.fillStyle   = p.color;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r * glowPulse, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.shadowBlur = 6;
-        ctx.globalAlpha = p.alpha * glowPulse * 0.8;
-        ctx.fillStyle = "#ffffff";
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r * 0.4, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      });
-
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const a = particles[i], b = particles[j];
-          const dx = a.x - b.x, dy = a.y - b.y;
-          const d  = Math.sqrt(dx*dx + dy*dy);
-          if (d > LINK_DIST) continue;
-          const opacity = (1 - d / LINK_DIST) * 0.45;
-          ctx.save();
-          ctx.globalAlpha = opacity;
-          ctx.shadowBlur  = 8;
-          ctx.shadowColor = a.color;
-          ctx.strokeStyle = a.color;
-          ctx.lineWidth   = 0.8;
-          ctx.beginPath();
-          ctx.moveTo(a.x, a.y);
-          ctx.lineTo(b.x, b.y);
-          ctx.stroke();
-          ctx.restore();
-        }
-      }
-
-      if (mx > 0 && my > 0) {
-        const rg = ctx.createRadialGradient(mx, my, 0, mx, my, 80);
-        rg.addColorStop(0, COL1 + "22");
-        rg.addColorStop(1, "transparent");
-        ctx.fillStyle = rg;
-        ctx.beginPath();
-        ctx.arc(mx, my, 80, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      if (runningRef.current) raf = requestAnimationFrame(draw);
-    }
-    draw();
-
-    return () => {
-      runningRef.current = false;
-      cancelAnimationFrame(raf);
-      window.removeEventListener("resize", resize);
-    };
-  }, [COL1, COL2]);
-
-  useEffect(() => {
-    const onMove = e => { mouseRef.current = { x: e.clientX, y: e.clientY }; };
-    window.addEventListener("mousemove", onMove);
-    return () => window.removeEventListener("mousemove", onMove);
-  }, []);
-
-  useEffect(() => {
-    const t = setTimeout(() => setPhase("type"), 1200);
-    return () => clearTimeout(t);
-  }, []);
-
-  useEffect(() => {
-    if (phase !== "type") return;
-    if (typed.length < TARGET.length) {
-      const t = setTimeout(() => setTyped(TARGET.slice(0, typed.length + 1)), 65);
-      return () => clearTimeout(t);
-    } else {
-      const t = setTimeout(() => setPhase("exit"), 900);
-      return () => clearTimeout(t);
-    }
-  }, [phase, typed]);
-
-  useEffect(() => {
-    if (phase !== "exit") return;
-    runningRef.current = false; // stop canvas RAF immediately on exit
-    const t = setTimeout(() => { setVisible(false); onDone(); }, 800);
-    return () => clearTimeout(t);
-  }, [phase]);
-
-  if (!visible) return null;
-
+/* ─── CLOUD / MIST BLOB ──────────────────────────────── */
+function MvCloud({ style, color = "#FFFFFF", opacity = 0.5 }) {
   return (
-    <div style={{
-      position:"fixed", inset:0, zIndex:999,
-      background:"#080504",
-      display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
-      transition: phase === "exit" ? "opacity 0.8s ease" : "none",
-      opacity: phase === "exit" ? 0 : 1,
-      cursor:"none",
-    }}>
-      <canvas ref={canvasRef} style={{ position:"absolute", inset:0, width:"100%", height:"100%" }} />
+    <svg style={{ position:"absolute", pointerEvents:"none", opacity, ...style }} viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="50" cy="50" rx="40" ry="22" fill={color}/>
+      <ellipse cx="95" cy="42" rx="48" ry="28" fill={color}/>
+      <ellipse cx="145" cy="50" rx="42" ry="24" fill={color}/>
+    </svg>
+  );
+}
 
-      {phase !== "particles" && (
-        <div style={{ position:"relative", zIndex:2, textAlign:"center", userSelect:"none" }}>
-          <div style={{ position:"relative", display:"inline-block" }}>
-            <h1 style={{
-              fontFamily:FONT_H,
-              fontSize:"clamp(54px,8vw,104px)",
-              fontWeight:700, letterSpacing:"-0.04em",
-              color:"transparent",
-              lineHeight:1,
-              WebkitTextStroke:`1px ${COL1}`,
-              textShadow:`0 0 40px ${COL1}80, 0 0 80px ${COL1}40`,
-              minWidth:"4ch",
-            }}>
-              {typed}
-              <span style={{ animation:"blink 0.7s step-end infinite" }}>|</span>
-            </h1>
-            <h1 aria-hidden="true" style={{
-              fontFamily:FONT_H,
-              fontSize:"clamp(54px,8vw,104px)",
-              fontWeight:700, letterSpacing:"-0.04em",
-              color:COL1,
-              lineHeight:1,
-              position:"absolute", top:0, left:0, width:"100%",
-              opacity:0.25,
-              filter:`blur(12px)`,
-              pointerEvents:"none",
-            }}>{typed}</h1>
-          </div>
-
-          <div style={{
-            fontFamily:FONT_MONO, fontSize:"11px", letterSpacing:"0.28em",
-            color:COL1, marginTop:"20px", opacity:0.55,
-            textShadow:`0 0 10px ${COL1}`,
-          }}>
-            FRONTEND ENGINEER · 前端工程師
-          </div>
-        </div>
-      )}
-
-      <div style={{ position:"absolute", bottom:"28px", left:0, right:0, display:"flex", justifyContent:"space-between", padding:"0 36px", zIndex:2 }}>
-        <span style={{ fontFamily:FONT_MONO, fontSize:"10px", color:COL1, opacity:0.3 }}>JC · PORTFOLIO</span>
-        <span style={{ fontFamily:FONT_MONO, fontSize:"10px", color:COL1, opacity:0.3 }}>2026</span>
-      </div>
-    </div>
+/* ─── BACKGROUND PAGODA SILHOUETTES ──────────────────── */
+function BgSilhouettes() {
+  return (
+    <svg
+      style={{
+        position:"fixed", inset:0, width:"100vw", height:"100vh",
+        pointerEvents:"none", zIndex:0, opacity:0.18,
+      }}
+      viewBox="0 0 1200 800"
+      preserveAspectRatio="xMidYMax meet"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      {/* Far back pagoda silhouettes */}
+      <g fill="#B89DD9">
+        <polygon points="60,800 60,580 130,540 200,580 200,800"/>
+        <polygon points="50,540 130,500 210,540 130,500"/>
+        <polygon points="130,500 130,460 110,440 150,440 130,420"/>
+        <polygon points="950,800 950,560 1030,520 1110,560 1110,800"/>
+        <polygon points="940,520 1030,478 1120,520"/>
+      </g>
+      <g fill="#8E80B8" opacity="0.65">
+        <polygon points="280,800 280,640 350,610 420,640 420,800"/>
+        <polygon points="700,800 700,600 780,560 860,600 860,800"/>
+      </g>
+      <g fill="#7B6BA8" opacity="0.45">
+        <polygon points="0,800 0,720 150,680 350,720 550,690 800,720 1050,690 1200,720 1200,800"/>
+      </g>
+    </svg>
   );
 }
 
 /* ─── NAVIGATION ─────────────────────────────────────── */
-function Nav({ theme, activeSection, themeName, onToggleTheme }) {
+function Nav({ activeSection }) {
   const links = [
     { id:"about",     label:"關於 About" },
     { id:"resume",    label:"履歷 Resume" },
@@ -321,12 +162,12 @@ function Nav({ theme, activeSection, themeName, onToggleTheme }) {
   return (
     <nav style={{
       position:"fixed", top:0, left:0, right:0, zIndex:100,
-      background:theme.navBg, backdropFilter:"blur(16px)",
-      borderBottom:`1px solid ${theme.divider}`,
+      background:THEME.navBg, backdropFilter:"blur(20px)", WebkitBackdropFilter:"blur(20px)",
+      borderBottom:`1px solid ${THEME.divider}`,
       display:"flex", alignItems:"center", justifyContent:"space-between",
-      padding:"0 clamp(24px,5vw,80px)", height:"60px",
+      padding:"0 clamp(24px,5vw,80px)", height:"64px",
     }}>
-      <span style={{ fontFamily:FONT_H, fontSize:"18px", fontWeight:600, letterSpacing:"-0.02em", color:theme.primary }}>
+      <span style={{ fontFamily:FONT_H, fontSize:"18px", fontWeight:600, letterSpacing:"-0.02em", color:THEME.coral }}>
         Jean Chung
       </span>
       <div style={{ display:"flex", gap:"clamp(20px,3vw,44px)", alignItems:"center" }}>
@@ -335,93 +176,102 @@ function Nav({ theme, activeSection, themeName, onToggleTheme }) {
             fontFamily:FONT_H, fontSize:"13px",
             fontWeight: activeSection === l.id ? 600 : 400,
             letterSpacing:"0.01em",
-            color: activeSection === l.id ? theme.primary : theme.textMuted,
+            color: activeSection === l.id ? THEME.coral : THEME.textMuted,
             textDecoration:"none",
-            borderBottom: activeSection === l.id ? `2px solid ${theme.primary}` : "2px solid transparent",
-            paddingBottom:"2px", transition:"all 0.25s ease",
+            borderBottom: activeSection === l.id ? `2px solid ${THEME.coral}` : "2px solid transparent",
+            paddingBottom:"3px", transition:"color 0.25s ease, border-color 0.25s ease",
           }}>{l.label}</a>
         ))}
-        <button
-          onClick={onToggleTheme}
-          title={themeName === "sumi" ? "切換淺色 Light mode" : "切換深色 Dark mode"}
-          style={{
-            fontFamily:FONT_MONO, fontSize:"10px", letterSpacing:"0.12em",
-            color:theme.textMuted, background:"transparent",
-            border:`1px solid ${theme.divider}`, cursor:"pointer",
-            padding:"5px 12px", transition:"all 0.25s",
-          }}
-          onMouseEnter={e => { e.currentTarget.style.color = theme.primary; e.currentTarget.style.borderColor = theme.primary; }}
-          onMouseLeave={e => { e.currentTarget.style.color = theme.textMuted; e.currentTarget.style.borderColor = theme.divider; }}
-        >
-          {themeName === "sumi" ? "☀" : "☽"}
-        </button>
       </div>
     </nav>
   );
 }
 
 /* ─── HERO ───────────────────────────────────────────── */
-function Hero({ theme, show }) {
+function Hero() {
   return (
     <section style={{
       minHeight:"100vh", display:"flex", alignItems:"center", justifyContent:"center",
       position:"relative", overflow:"hidden",
-      background:theme.bg, padding:"80px clamp(24px,8vw,120px) 60px",
+      background:THEME.tintHero, padding:"100px clamp(24px,8vw,120px) 60px",
     }}>
-      <WcSplash style={{ top:"-60px", right:"-40px", width:"440px", height:"380px", opacity:0.85 }} theme={theme} variant={0} />
-      <WcSplash style={{ bottom:"0", left:"-80px", width:"380px", height:"320px", opacity:0.65 }} theme={theme} variant={1} />
+      <MvCloud style={{ top:"12%", left:"-60px", width:"320px", height:"120px" }} color="#FFFFFF" opacity={0.6}/>
+      <MvCloud style={{ top:"22%", right:"-40px", width:"280px", height:"100px" }} color="#FFFFFF" opacity={0.5}/>
+      <MvCloud style={{ top:"40%", left:"20%", width:"200px", height:"80px" }} color="#FFF4E6" opacity={0.45}/>
 
-      <div style={{ maxWidth:"800px", position:"relative", zIndex:1,
-        opacity: show ? 1 : 0, transform: show ? "none" : "translateY(20px)",
-        transition:"opacity 0.9s ease 0.1s, transform 0.9s ease 0.1s",
+      <MvTower style={{ bottom:"6%", right:"6%", width:"clamp(220px, 28vw, 360px)", height:"clamp(280px, 36vw, 460px)" }} opacity={0.95}/>
+      <MvTower style={{ bottom:"4%", left:"4%", width:"clamp(140px, 16vw, 220px)", height:"clamp(180px, 20vw, 280px)" }} opacity={0.4}/>
+
+      <div style={{
+        maxWidth:"820px", position:"relative", zIndex:2, width:"100%",
       }}>
-        <div style={{ fontFamily:FONT_MONO, fontSize:"11px", letterSpacing:"0.25em", color:theme.accent, marginBottom:"32px", display:"flex", alignItems:"center", gap:"12px" }}>
-          <span style={{ display:"inline-block", width:"32px", height:"1px", background:theme.accent }}></span>
+        <div style={{
+          fontFamily:FONT_MONO, fontSize:"11px", letterSpacing:"0.28em",
+          color:THEME.deepPurple, marginBottom:"32px",
+          display:"flex", alignItems:"center", gap:"12px",
+        }}>
+          <span style={{ display:"inline-block", width:"40px", height:"1px", background:THEME.deepPurple, opacity:0.6 }}></span>
           前端工程師 · Frontend Engineer
         </div>
 
-        <h1 style={{ fontFamily:FONT_H, fontSize:"clamp(60px,8.5vw,116px)", fontWeight:700, lineHeight:0.95, color:theme.text, letterSpacing:"-0.04em", marginBottom:"4px" }}>
+        <h1 style={{
+          fontFamily:FONT_H, fontSize:"clamp(60px,9vw,124px)", fontWeight:700,
+          lineHeight:0.95, color:THEME.text, letterSpacing:"-0.045em",
+          marginBottom:"4px",
+        }}>
           Jean
         </h1>
-        <h1 style={{ fontFamily:FONT_H, fontSize:"clamp(60px,8.5vw,116px)", fontWeight:300, lineHeight:0.95, color:theme.primary, letterSpacing:"-0.04em", marginBottom:"44px" }}>
+        <h1 style={{
+          fontFamily:FONT_H, fontSize:"clamp(60px,9vw,124px)", fontWeight:300,
+          lineHeight:0.95, letterSpacing:"-0.045em",
+          marginBottom:"44px",
+          background:`linear-gradient(135deg, ${THEME.coral} 0%, ${THEME.lavender} 100%)`,
+          WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent",
+          backgroundClip:"text",
+        }}>
           Chung
         </h1>
 
-        <p style={{ fontFamily:FONT_BODY, fontSize:"clamp(15px,1.7vw,18px)", fontWeight:300, lineHeight:1.9, color:theme.textMuted, maxWidth:"460px", marginBottom:"52px", letterSpacing:"0.03em" }}>
+        <p style={{
+          fontFamily:FONT_BODY, fontSize:"clamp(15px,1.7vw,18px)", fontWeight:400,
+          lineHeight:1.95, color:THEME.textSoft, maxWidth:"480px",
+          marginBottom:"52px", letterSpacing:"0.03em",
+        }}>
           6 年以上前端開發經驗，專注 React 生態系、效能優化與 Web3 應用。<br/>
-          <span style={{ fontFamily:FONT_H, fontSize:"0.88em", fontWeight:400, color:theme.textMuted + "BB" }}>
+          <span style={{ fontFamily:FONT_H, fontSize:"0.88em", fontWeight:400, color:THEME.textMuted }}>
             6+ years building performant web apps — from crypto exchanges to DeFi DApps.
           </span>
         </p>
 
         <div style={{ display:"flex", gap:"14px", flexWrap:"wrap" }}>
           <a href="#portfolio" style={{
-            fontFamily:FONT_H, fontSize:"13px", letterSpacing:"0.05em", fontWeight:600,
-            padding:"14px 36px", background:theme.primary, color:"#FAF5EC",
+            fontFamily:FONT_H, fontSize:"13px", letterSpacing:"0.06em", fontWeight:600,
+            padding:"15px 38px",
+            background:`linear-gradient(135deg, ${THEME.coral} 0%, ${THEME.pink} 100%)`,
+            color:"#FFFFFF",
             textDecoration:"none", display:"inline-block",
-            transition:"opacity 0.2s",
+            borderRadius:"999px",
+            boxShadow:"0 8px 24px rgba(232,159,140,0.35)",
+            transition:"transform 0.25s ease, box-shadow 0.25s ease",
           }}
-          onMouseEnter={e=>e.currentTarget.style.opacity="0.8"}
-          onMouseLeave={e=>e.currentTarget.style.opacity="1"}>
+          onMouseEnter={e=>{ e.currentTarget.style.transform="translateY(-2px)"; e.currentTarget.style.boxShadow="0 12px 32px rgba(232,159,140,0.45)"; }}
+          onMouseLeave={e=>{ e.currentTarget.style.transform="none"; e.currentTarget.style.boxShadow="0 8px 24px rgba(232,159,140,0.35)"; }}>
             作品集 Work →
           </a>
           <a href="#about" style={{
-            fontFamily:FONT_H, fontSize:"13px", letterSpacing:"0.05em", fontWeight:400,
-            padding:"14px 36px",
-            border:`1px solid ${theme.accent}`,
-            color:theme.textMuted,
+            fontFamily:FONT_H, fontSize:"13px", letterSpacing:"0.06em", fontWeight:500,
+            padding:"15px 38px",
+            border:`1.5px solid ${THEME.lavender}`,
+            color:THEME.deepPurple,
+            background:"rgba(255,255,255,0.4)",
             textDecoration:"none", display:"inline-block",
-            transition:"border-color 0.2s, color 0.2s",
+            borderRadius:"999px",
+            transition:"all 0.25s ease",
           }}
-          onMouseEnter={e=>{ e.currentTarget.style.borderColor=theme.primary; e.currentTarget.style.color=theme.primary; }}
-          onMouseLeave={e=>{ e.currentTarget.style.borderColor=theme.accent; e.currentTarget.style.color=theme.textMuted; }}>
+          onMouseEnter={e=>{ e.currentTarget.style.background="rgba(255,255,255,0.7)"; e.currentTarget.style.borderColor=THEME.coral; e.currentTarget.style.color=THEME.coral; }}
+          onMouseLeave={e=>{ e.currentTarget.style.background="rgba(255,255,255,0.4)"; e.currentTarget.style.borderColor=THEME.lavender; e.currentTarget.style.color=THEME.deepPurple; }}>
             關於我 About
           </a>
-        </div>
-
-        <div style={{ position:"absolute", bottom:"-200px", left:0, display:"flex", flexDirection:"column", alignItems:"flex-start", gap:"8px" }}>
-          <span style={{ fontFamily:FONT_MONO, fontSize:"10px", color:theme.textMuted, letterSpacing:"0.15em" }}>scroll</span>
-          <div style={{ width:"1px", height:"56px", background:`linear-gradient(to bottom,${theme.accent},transparent)` }}></div>
         </div>
       </div>
     </section>
@@ -429,78 +279,62 @@ function Hero({ theme, show }) {
 }
 
 /* ─── ABOUT ──────────────────────────────────────────── */
-function About({ theme }) {
-  const sectionRef = useRef(null);
-  const blobRef    = useRef(null);
-  const photoRef   = useRef(null);
-  const textRef    = useRef(null);
-
-  useEffect(() => {
-    let rafId = null;
-    function onScroll() {
-      if (rafId) return;
-      rafId = requestAnimationFrame(() => {
-        const el = sectionRef.current;
-        if (el) {
-          const progress = -el.getBoundingClientRect().top / window.innerHeight;
-          if (blobRef.current)  blobRef.current.style.transform  = `translateY(${progress * 60}px)`;
-          if (photoRef.current) photoRef.current.style.transform = `translateY(${progress * -30}px)`;
-          if (textRef.current)  textRef.current.style.transform  = `translateY(${progress * -15}px)`;
-        }
-        rafId = null;
-      });
-    }
-    window.addEventListener("scroll", onScroll, { passive:true });
-    return () => { window.removeEventListener("scroll", onScroll); if (rafId) cancelAnimationFrame(rafId); };
-  }, []);
-
+function About() {
   const skills = ["React","TypeScript","Vue","Next.js","Tailwind","ethers.js","Node.js","Docker"];
 
   return (
-    <section id="about" ref={sectionRef} style={{
-      background:theme.bgDeep, padding:"130px clamp(24px,8vw,120px)",
+    <section id="about" style={{
+      background:THEME.tintAbout, padding:"130px clamp(24px,8vw,120px)",
       position:"relative", overflow:"hidden",
     }}>
-      <div ref={blobRef} style={{ position:"absolute", inset:0, pointerEvents:"none", willChange:"transform" }}>
-        <WcSplash style={{ top:"-40px", left:"45%", width:"520px", height:"420px", opacity:0.45 }} theme={theme} variant={2} />
-        <WcSplash style={{ bottom:"-60px", left:"-60px", width:"360px", height:"300px", opacity:0.3 }} theme={theme} variant={0} />
-      </div>
+      <MvCloud style={{ top:"8%", right:"5%", width:"260px", height:"90px" }} color="#FFFFFF" opacity={0.55}/>
 
       <div style={{ maxWidth:"960px", margin:"0 auto", position:"relative", zIndex:1 }}>
-        <SectionTitle theme={theme} en="About" ja="自己紹介" zh="關於我" />
+        <SectionTitle en="About" ja="自己紹介" zh="關於我" />
 
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"clamp(40px,6vw,100px)", alignItems:"start", marginTop:"64px" }}>
 
-          <div ref={photoRef} style={{ willChange:"transform" }}>
+          <div>
             <div style={{
               width:"100%", aspectRatio:"4/5",
-              background:theme.accentLight,
+              background:`linear-gradient(160deg, ${THEME.lavender} 0%, ${THEME.pink} 50%, ${THEME.coral} 100%)`,
               overflow:"hidden", position:"relative",
+              borderRadius:"24px",
+              boxShadow:"0 20px 60px rgba(125,100,168,0.25)",
               display:"flex", alignItems:"center", justifyContent:"center",
             }}>
-              <svg style={{ width:"70%", height:"70%", opacity:0.35 }} viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="100" cy="80" r="45" fill={theme.accent} opacity="0.6"/>
-                <ellipse cx="100" cy="200" rx="70" ry="60" fill={theme.accent} opacity="0.4"/>
-              </svg>
-              <span style={{ position:"absolute", bottom:"14px", left:"50%", transform:"translateX(-50%)", fontFamily:FONT_MONO, fontSize:"9px", color:theme.textMuted, letterSpacing:"0.12em", whiteSpace:"nowrap" }}>Jean Chung</span>
+              <MvTower style={{ inset:"10%", width:"80%", height:"80%" }} opacity={0.95}/>
+              <span style={{
+                position:"absolute", bottom:"18px", left:"50%", transform:"translateX(-50%)",
+                fontFamily:FONT_MONO, fontSize:"10px", color:"#FFFFFF",
+                letterSpacing:"0.16em", whiteSpace:"nowrap",
+                background:"rgba(125,100,168,0.5)", padding:"4px 12px", borderRadius:"999px",
+              }}>Jean Chung</span>
             </div>
           </div>
 
-          <div ref={textRef} style={{ paddingTop:"8px", willChange:"transform" }}>
-            <p style={{ fontFamily:FONT_BODY, fontSize:"clamp(15px,1.6vw,17px)", fontWeight:300, lineHeight:2.0, color:theme.text, letterSpacing:"0.04em", marginBottom:"20px" }}>
+          <div style={{ paddingTop:"8px" }}>
+            <p style={{
+              fontFamily:FONT_BODY, fontSize:"clamp(15px,1.6vw,17px)", fontWeight:400,
+              lineHeight:2.0, color:THEME.text, letterSpacing:"0.04em", marginBottom:"20px",
+            }}>
               你好，我是 Jean。擁有 6 年以上前端開發經驗，曾參與加密貨幣交易所、DeFi 去中心化應用及線上遊戲平台的開發。熱衷於效能優化、乾淨的程式架構，以及與設計師緊密協作打造流暢的使用者體驗。
             </p>
-            <p style={{ fontFamily:FONT_H, fontSize:"clamp(14px,1.5vw,16px)", fontWeight:400, lineHeight:1.75, color:theme.textMuted, marginBottom:"40px" }}>
+            <p style={{
+              fontFamily:FONT_H, fontSize:"clamp(14px,1.5vw,16px)", fontWeight:400,
+              lineHeight:1.75, color:THEME.textSoft, marginBottom:"40px",
+            }}>
               Hi — I'm a frontend engineer based in Taipei with experience across crypto exchanges, DeFi DApps, and web game platforms. I care deeply about performance, clean architecture, and pixel-perfect execution.
             </p>
             <div style={{ display:"flex", flexWrap:"wrap", gap:"8px" }}>
               {skills.map(s => (
                 <span key={s} style={{
                   fontFamily:FONT_H, fontSize:"12px", fontWeight:500, letterSpacing:"0.04em",
-                  padding:"5px 14px",
-                  border:`1px solid ${theme.accent}60`,
-                  color:theme.textMuted,
-                  background:theme.accent + "12",
+                  padding:"6px 16px",
+                  border:`1px solid ${THEME.lavender}80`,
+                  color:THEME.deepPurple,
+                  background:"rgba(255,255,255,0.5)",
+                  borderRadius:"999px",
                 }}>{s}</span>
               ))}
             </div>
@@ -512,7 +346,7 @@ function About({ theme }) {
 }
 
 /* ─── RESUME ─────────────────────────────────────────── */
-function Resume({ theme }) {
+function Resume() {
   const jobs = [
     {
       year:"2023/02 — 現在",
@@ -538,50 +372,66 @@ function Resume({ theme }) {
   ];
 
   return (
-    <section id="resume" style={{ background:theme.bg, padding:"120px clamp(24px,8vw,120px)", position:"relative", overflow:"hidden" }}>
-      <WcSplash style={{ bottom:"40px", right:"-60px", width:"380px", height:"320px", opacity:0.5 }} theme={theme} variant={1} />
-      <div style={{ maxWidth:"760px", margin:"0 auto", position:"relative", zIndex:1 }}>
-        <SectionTitle theme={theme} en="Resume" ja="経歴" zh="工作履歷" />
+    <section id="resume" style={{
+      background:THEME.tintResume, padding:"120px clamp(24px,8vw,120px)",
+      position:"relative", overflow:"hidden",
+    }}>
+      <MvCloud style={{ bottom:"15%", left:"-40px", width:"240px", height:"80px" }} color="#FFFFFF" opacity={0.5}/>
+
+      <div style={{ maxWidth:"820px", margin:"0 auto", position:"relative", zIndex:1 }}>
+        <SectionTitle en="Resume" ja="経歴" zh="工作履歷" />
         <div style={{ marginTop:"60px" }}>
-          <h3 style={{ fontFamily:FONT_MONO, fontSize:"11px", letterSpacing:"0.2em", color:theme.accent, marginBottom:"36px" }}>— WORK EXPERIENCE</h3>
+          <h3 style={{ fontFamily:FONT_MONO, fontSize:"11px", letterSpacing:"0.22em", color:THEME.coral, marginBottom:"36px" }}>— WORK EXPERIENCE</h3>
           {jobs.map((j,i) => (
             <div key={i} style={{
+              background:"rgba(255,255,255,0.5)",
+              backdropFilter:"blur(8px)", WebkitBackdropFilter:"blur(8px)",
+              borderRadius:"20px",
+              border:`1px solid ${THEME.divider}`,
+              padding:"28px 32px", marginBottom:"20px",
               display:"grid", gridTemplateColumns:"160px 1fr", gap:"32px",
-              paddingBottom:"36px", marginBottom:"36px",
-              borderBottom: i < jobs.length-1 ? `1px solid ${theme.divider}` : "none",
             }}>
-              <div style={{ paddingTop:"5px" }}>
-                <div style={{ fontFamily:FONT_MONO, fontSize:"11px", color:theme.accent, letterSpacing:"0.06em", marginBottom:"8px" }}>{j.year}</div>
-                <div style={{ fontFamily:FONT_MONO, fontSize:"10px", color:theme.textMuted, letterSpacing:"0.04em", lineHeight:1.6 }}>{j.stack}</div>
+              <div style={{ paddingTop:"4px" }}>
+                <div style={{ fontFamily:FONT_MONO, fontSize:"11px", color:THEME.coral, letterSpacing:"0.06em", marginBottom:"10px" }}>{j.year}</div>
+                <div style={{ fontFamily:FONT_MONO, fontSize:"10px", color:THEME.textMuted, letterSpacing:"0.04em", lineHeight:1.7 }}>{j.stack}</div>
               </div>
               <div>
-                <div style={{ fontFamily:FONT_H, fontSize:"19px", fontWeight:600, color:theme.text, marginBottom:"3px" }}>{j.role}</div>
-                <div style={{ fontFamily:FONT_H, fontSize:"14px", fontWeight:400, color:theme.primary, marginBottom:"12px" }}>{j.company}</div>
-                <div style={{ fontFamily:FONT_BODY, fontSize:"14px", fontWeight:300, lineHeight:1.85, color:theme.textMuted, letterSpacing:"0.03em" }}>{j.desc}</div>
+                <div style={{ fontFamily:FONT_H, fontSize:"19px", fontWeight:600, color:THEME.text, marginBottom:"3px" }}>{j.role}</div>
+                <div style={{ fontFamily:FONT_H, fontSize:"14px", fontWeight:500, color:THEME.deepPurple, marginBottom:"14px" }}>{j.company}</div>
+                <div style={{ fontFamily:FONT_BODY, fontSize:"14px", fontWeight:400, lineHeight:1.85, color:THEME.textSoft, letterSpacing:"0.03em" }}>{j.desc}</div>
               </div>
             </div>
           ))}
 
-          <h3 style={{ fontFamily:FONT_MONO, fontSize:"11px", letterSpacing:"0.2em", color:theme.accent, margin:"48px 0 36px" }}>— EDUCATION</h3>
-          <div style={{ display:"grid", gridTemplateColumns:"160px 1fr", gap:"32px" }}>
-            <div style={{ fontFamily:FONT_MONO, fontSize:"11px", color:theme.accent, letterSpacing:"0.06em", paddingTop:"5px" }}>2018</div>
+          <h3 style={{ fontFamily:FONT_MONO, fontSize:"11px", letterSpacing:"0.22em", color:THEME.coral, margin:"48px 0 28px" }}>— EDUCATION</h3>
+          <div style={{
+            background:"rgba(255,255,255,0.5)", borderRadius:"20px",
+            border:`1px solid ${THEME.divider}`, padding:"24px 32px",
+            display:"grid", gridTemplateColumns:"160px 1fr", gap:"32px",
+          }}>
+            <div style={{ fontFamily:FONT_MONO, fontSize:"11px", color:THEME.coral, letterSpacing:"0.06em", paddingTop:"5px" }}>2018</div>
             <div>
-              <div style={{ fontFamily:FONT_H, fontSize:"19px", fontWeight:600, color:theme.text, marginBottom:"3px" }}>國立中央大學</div>
-              <div style={{ fontFamily:FONT_H, fontSize:"14px", color:theme.textMuted }}>機械工程學系碩士 · M.Eng. Mechanical Engineering, National Central University</div>
+              <div style={{ fontFamily:FONT_H, fontSize:"19px", fontWeight:600, color:THEME.text, marginBottom:"3px" }}>國立中央大學</div>
+              <div style={{ fontFamily:FONT_H, fontSize:"14px", color:THEME.textSoft }}>機械工程學系碩士 · M.Eng. Mechanical Engineering, National Central University</div>
             </div>
           </div>
 
-          <h3 style={{ fontFamily:FONT_MONO, fontSize:"11px", letterSpacing:"0.2em", color:theme.accent, margin:"48px 0 36px" }}>— SKILLS</h3>
-          <div style={{ display:"grid", gridTemplateColumns:"160px 1fr", gap:"32px" }}>
-            <div style={{ fontFamily:FONT_MONO, fontSize:"11px", color:theme.accent, letterSpacing:"0.06em", paddingTop:"5px" }}>Front-end</div>
-            <div style={{ fontFamily:FONT_BODY, fontSize:"14px", fontWeight:300, lineHeight:1.85, color:theme.textMuted }}>
-              JavaScript · TypeScript · HTML · CSS · React · Vue · Next.js · Tailwind · webpack · Material-UI · Ant Design · Element UI · ethers.js
+          <h3 style={{ fontFamily:FONT_MONO, fontSize:"11px", letterSpacing:"0.22em", color:THEME.coral, margin:"48px 0 28px" }}>— SKILLS</h3>
+          <div style={{
+            background:"rgba(255,255,255,0.5)", borderRadius:"20px",
+            border:`1px solid ${THEME.divider}`, padding:"24px 32px",
+          }}>
+            <div style={{ display:"grid", gridTemplateColumns:"160px 1fr", gap:"32px", marginBottom:"16px" }}>
+              <div style={{ fontFamily:FONT_MONO, fontSize:"11px", color:THEME.coral, letterSpacing:"0.06em", paddingTop:"5px" }}>Front-end</div>
+              <div style={{ fontFamily:FONT_BODY, fontSize:"14px", fontWeight:400, lineHeight:1.85, color:THEME.textSoft }}>
+                JavaScript · TypeScript · HTML · CSS · React · Vue · Next.js · Tailwind · webpack · Material-UI · Ant Design · Element UI · ethers.js
+              </div>
             </div>
-          </div>
-          <div style={{ display:"grid", gridTemplateColumns:"160px 1fr", gap:"32px", marginTop:"20px" }}>
-            <div style={{ fontFamily:FONT_MONO, fontSize:"11px", color:theme.accent, letterSpacing:"0.06em", paddingTop:"5px" }}>Tools</div>
-            <div style={{ fontFamily:FONT_BODY, fontSize:"14px", fontWeight:300, lineHeight:1.85, color:theme.textMuted }}>
-              Git · Docker · Postman · VS Code · Cypress · Node.js
+            <div style={{ display:"grid", gridTemplateColumns:"160px 1fr", gap:"32px" }}>
+              <div style={{ fontFamily:FONT_MONO, fontSize:"11px", color:THEME.coral, letterSpacing:"0.06em", paddingTop:"5px" }}>Tools</div>
+              <div style={{ fontFamily:FONT_BODY, fontSize:"14px", fontWeight:400, lineHeight:1.85, color:THEME.textSoft }}>
+                Git · Docker · Postman · VS Code · Cypress · Node.js
+              </div>
             </div>
           </div>
         </div>
@@ -591,7 +441,7 @@ function Resume({ theme }) {
 }
 
 /* ─── PORTFOLIO ──────────────────────────────────────── */
-function Portfolio({ theme }) {
+function Portfolio() {
   const projects = [
     {
       num:"01",
@@ -599,7 +449,8 @@ function Portfolio({ theme }) {
       en:"Crypto Exchange Platform",
       desc:"開發完整的加密貨幣交易所前端，包含即時行情、TradingView K 線圖、訂單簿與交易介面，並導入 JWE 端對端加密保護用戶資料。",
       tags:["Vue","Next.js","Tailwind","Cypress"],
-      color:theme.primary,
+      gradient:`linear-gradient(135deg, ${THEME.coral} 0%, ${THEME.pink} 100%)`,
+      accent:THEME.coral,
     },
     {
       num:"02",
@@ -607,7 +458,8 @@ function Portfolio({ theme }) {
       en:"DeFi DApp — NAOS Finance",
       desc:"以 React + ethers.js 打造 DeFi 借貸平台前端，直接串接智能合約 ABI，實現錢包連線、資產存取與流動性挖礦功能。",
       tags:["React","TypeScript","ethers.js","styled-components"],
-      color:theme.accent,
+      gradient:`linear-gradient(135deg, ${THEME.lavender} 0%, ${THEME.sky} 100%)`,
+      accent:THEME.lavender,
     },
     {
       num:"03",
@@ -615,7 +467,8 @@ function Portfolio({ theme }) {
       en:"Web Game Platform",
       desc:"開發老虎機遊戲功能與整套後台管理系統，以 React 架構支援多款遊戲，整合 Google Analytics 行為埋點追蹤。",
       tags:["React","JavaScript","Node.js","Docker"],
-      color:theme.primary,
+      gradient:`linear-gradient(135deg, ${THEME.cream} 0%, ${THEME.coral} 100%)`,
+      accent:THEME.deepPurple,
     },
     {
       num:"04",
@@ -623,48 +476,70 @@ function Portfolio({ theme }) {
       en:"UI Component Library",
       desc:"為 DeFi 產品開發內部 UI node package，建立統一的設計語言，提升跨團隊協作效率並降低重複開發成本。",
       tags:["React","TypeScript","npm"],
-      color:theme.accent,
+      gradient:`linear-gradient(135deg, ${THEME.pink} 0%, ${THEME.lavender} 100%)`,
+      accent:THEME.lavender,
     },
   ];
   return (
-    <section id="portfolio" style={{ background:theme.bgDeep, padding:"120px clamp(24px,8vw,120px)", position:"relative", overflow:"hidden" }}>
-      <WcSplash style={{ top:"-40px", left:"-60px", width:"440px", height:"380px", opacity:0.5 }} theme={theme} variant={0} />
-      <div style={{ maxWidth:"1000px", margin:"0 auto", position:"relative", zIndex:1 }}>
-        <SectionTitle theme={theme} en="Work" ja="作品" zh="作品集" />
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(420px,1fr))", gap:"24px", marginTop:"60px" }}>
-          {projects.map((p,i) => <ProjectCard key={i} p={p} theme={theme} />)}
+    <section id="portfolio" style={{
+      background:THEME.tintWork, padding:"120px clamp(24px,8vw,120px)",
+      position:"relative", overflow:"hidden",
+    }}>
+      <MvCloud style={{ top:"10%", left:"5%", width:"260px", height:"90px" }} color="#FFFFFF" opacity={0.5}/>
+
+      <div style={{ maxWidth:"1080px", margin:"0 auto", position:"relative", zIndex:1 }}>
+        <SectionTitle en="Work" ja="作品" zh="作品集" />
+        <div style={{
+          display:"grid",
+          gridTemplateColumns:"repeat(auto-fill,minmax(420px,1fr))",
+          gap:"24px", marginTop:"60px",
+        }}>
+          {projects.map((p,i) => <ProjectCard key={i} p={p} />)}
         </div>
       </div>
     </section>
   );
 }
 
-function ProjectCard({ p, theme }) {
+function ProjectCard({ p }) {
   const [hov, setHov] = useState(false);
   return (
     <div
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
-        background: theme.cardBg,
-        border:`1px solid ${hov ? p.color : theme.divider}`,
-        padding:"36px", position:"relative", overflow:"hidden", cursor:"pointer",
+        background: "rgba(255,255,255,0.55)",
+        backdropFilter:"blur(10px)", WebkitBackdropFilter:"blur(10px)",
+        border:`1px solid ${hov ? p.accent + "80" : THEME.divider}`,
+        borderRadius:"24px",
+        padding:"32px", position:"relative", overflow:"hidden", cursor:"pointer",
         transition:"border-color 0.3s, transform 0.3s, box-shadow 0.3s",
-        transform: hov ? "translateY(-5px)" : "none",
-        boxShadow: hov ? `0 12px 40px ${p.color}20` : "none",
+        transform: hov ? "translateY(-4px)" : "none",
+        boxShadow: hov
+          ? `0 16px 40px ${p.accent}30`
+          : "0 4px 16px rgba(125,100,168,0.08)",
       }}
     >
-      <div style={{ position:"absolute", inset:0, background: hov ? `${p.color}07` : "transparent", transition:"background 0.3s", pointerEvents:"none" }} />
-      <div style={{ fontFamily:FONT_H, fontSize:"52px", fontWeight:700, letterSpacing:"-0.04em", color: hov ? p.color : theme.accentLight, transition:"color 0.3s", lineHeight:1, marginBottom:"20px" }}>{p.num}</div>
-      <div style={{ fontFamily:FONT_H, fontSize:"20px", fontWeight:600, color:theme.text, marginBottom:"3px" }}>{p.title}</div>
-      <div style={{ fontFamily:FONT_H, fontSize:"13px", fontWeight:400, color:p.color, marginBottom:"14px", letterSpacing:"0.03em" }}>{p.en}</div>
-      <div style={{ fontFamily:FONT_BODY, fontSize:"14px", fontWeight:300, lineHeight:1.85, color:theme.textMuted, marginBottom:"24px", letterSpacing:"0.03em" }}>{p.desc}</div>
+      {/* gradient header chip */}
+      <div style={{
+        width:"64px", height:"64px",
+        borderRadius:"16px",
+        background:p.gradient,
+        display:"flex", alignItems:"center", justifyContent:"center",
+        fontFamily:FONT_H, fontSize:"24px", fontWeight:700, color:"#FFFFFF",
+        marginBottom:"22px",
+        boxShadow:`0 8px 20px ${p.accent}40`,
+      }}>{p.num}</div>
+
+      <div style={{ fontFamily:FONT_H, fontSize:"20px", fontWeight:600, color:THEME.text, marginBottom:"3px" }}>{p.title}</div>
+      <div style={{ fontFamily:FONT_H, fontSize:"13px", fontWeight:500, color:p.accent, marginBottom:"14px", letterSpacing:"0.03em" }}>{p.en}</div>
+      <div style={{ fontFamily:FONT_BODY, fontSize:"14px", fontWeight:400, lineHeight:1.85, color:THEME.textSoft, marginBottom:"24px", letterSpacing:"0.03em" }}>{p.desc}</div>
       <div style={{ display:"flex", flexWrap:"wrap", gap:"8px" }}>
         {p.tags.map(t => (
           <span key={t} style={{
             fontFamily:FONT_H, fontSize:"11px", fontWeight:500, letterSpacing:"0.05em",
-            padding:"4px 12px",
-            background:`${p.color}18`, color:p.color, border:`1px solid ${p.color}30`,
+            padding:"5px 12px", borderRadius:"999px",
+            background:`${p.accent}18`, color:p.accent, border:`1px solid ${p.accent}30`,
           }}>{t}</span>
         ))}
       </div>
@@ -673,56 +548,69 @@ function ProjectCard({ p, theme }) {
 }
 
 /* ─── BLOG ───────────────────────────────────────────── */
-function Blog({ theme }) {
+function Blog() {
   const posts = [
     { date:"2026.03", cat:"Web3",        title:"用 ethers.js 串接智能合約的實戰心得",         en:"Connecting Smart Contracts with ethers.js",        min:"10 min" },
     { date:"2026.01", cat:"Performance", title:"加密貨幣交易所前端效能優化實錄",               en:"Optimizing a Crypto Exchange Frontend",             min:"12 min" },
     { date:"2025.11", cat:"React",       title:"從 React 到 Vue：語法差異與思維轉換",          en:"From React to Vue: Syntax & Mental Model Shifts",  min:"8 min" },
   ];
   return (
-    <section id="blog" style={{ background:theme.bg, padding:"120px clamp(24px,8vw,120px) 160px", position:"relative", overflow:"hidden" }}>
-      <WcSplash style={{ bottom:"-20px", right:"-40px", width:"400px", height:"340px", opacity:0.5 }} theme={theme} variant={2} />
-      <div style={{ maxWidth:"760px", margin:"0 auto", position:"relative", zIndex:1 }}>
-        <SectionTitle theme={theme} en="Blog" ja="ブログ" zh="技術文章" />
-        <div style={{ marginTop:"60px" }}>
-          {posts.map((p,i) => <BlogRow key={i} p={p} theme={theme} isLast={i===posts.length-1} />)}
+    <section id="blog" style={{
+      background:THEME.tintBlog, padding:"120px clamp(24px,8vw,120px) 160px",
+      position:"relative", overflow:"hidden",
+    }}>
+      <MvCloud style={{ top:"15%", right:"-30px", width:"260px", height:"90px" }} color="#FFFFFF" opacity={0.5}/>
+
+      <div style={{ maxWidth:"820px", margin:"0 auto", position:"relative", zIndex:1 }}>
+        <SectionTitle en="Blog" ja="ブログ" zh="技術文章" />
+        <div style={{ marginTop:"48px" }}>
+          {posts.map((p,i) => <BlogRow key={i} p={p} isLast={i===posts.length-1} />)}
         </div>
       </div>
 
       <div style={{
-        maxWidth:"760px", margin:"80px auto 0", paddingTop:"60px",
-        borderTop:`1px solid ${theme.divider}`,
+        maxWidth:"820px", margin:"80px auto 0",
+        background:"rgba(255,255,255,0.55)",
+        backdropFilter:"blur(12px)", WebkitBackdropFilter:"blur(12px)",
+        border:`1px solid ${THEME.divider}`,
+        borderRadius:"24px",
+        padding:"40px 44px",
         display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:"24px",
         position:"relative", zIndex:1,
       }}>
         <div>
-          <div style={{ fontFamily:FONT_H, fontSize:"clamp(22px,3vw,30px)", fontWeight:600, color:theme.text, marginBottom:"6px", letterSpacing:"-0.02em" }}>
+          <div style={{ fontFamily:FONT_H, fontSize:"clamp(22px,3vw,30px)", fontWeight:600, color:THEME.text, marginBottom:"6px", letterSpacing:"-0.02em" }}>
             Let's build something together.
           </div>
-          <div style={{ fontFamily:FONT_BODY, fontSize:"13px", fontWeight:300, color:theme.textMuted, letterSpacing:"0.06em" }}>歡迎聯絡合作 · Taipei, Taiwan</div>
+          <div style={{ fontFamily:FONT_BODY, fontSize:"13px", fontWeight:400, color:THEME.textSoft, letterSpacing:"0.06em" }}>歡迎聯絡合作 · Taipei, Taiwan</div>
         </div>
         <a href="mailto:jean619215@gmail.com" style={{
           fontFamily:FONT_H, fontSize:"13px", fontWeight:600, letterSpacing:"0.06em",
-          padding:"14px 32px", border:`1px solid ${theme.primary}`, color:theme.primary,
-          textDecoration:"none", transition:"all 0.25s", whiteSpace:"nowrap",
+          padding:"14px 32px",
+          background:`linear-gradient(135deg, ${THEME.coral} 0%, ${THEME.pink} 100%)`,
+          color:"#FFFFFF",
+          borderRadius:"999px",
+          textDecoration:"none",
+          boxShadow:"0 8px 20px rgba(232,159,140,0.35)",
+          transition:"transform 0.25s, box-shadow 0.25s", whiteSpace:"nowrap",
         }}
-        onMouseEnter={e=>{ e.currentTarget.style.background=theme.primary; e.currentTarget.style.color="#FAF5EC"; }}
-        onMouseLeave={e=>{ e.currentTarget.style.background="transparent"; e.currentTarget.style.color=theme.primary; }}>
+        onMouseEnter={e=>{ e.currentTarget.style.transform="translateY(-2px)"; e.currentTarget.style.boxShadow="0 12px 28px rgba(232,159,140,0.45)"; }}
+        onMouseLeave={e=>{ e.currentTarget.style.transform="none"; e.currentTarget.style.boxShadow="0 8px 20px rgba(232,159,140,0.35)"; }}>
           聯絡我 Say hello
         </a>
       </div>
 
-      <div style={{ maxWidth:"760px", margin:"40px auto 0", position:"relative", zIndex:1 }}>
-        <div style={{ display:"flex", gap:"24px", alignItems:"center" }}>
-          <a href="mailto:jean619215@gmail.com" style={{ fontFamily:FONT_MONO, fontSize:"11px", color:theme.textMuted, textDecoration:"none", letterSpacing:"0.08em" }}>
+      <div style={{ maxWidth:"820px", margin:"32px auto 0", position:"relative", zIndex:1 }}>
+        <div style={{ display:"flex", gap:"20px", alignItems:"center", flexWrap:"wrap" }}>
+          <a href="mailto:jean619215@gmail.com" style={{ fontFamily:FONT_MONO, fontSize:"11px", color:THEME.textMuted, textDecoration:"none", letterSpacing:"0.08em" }}>
             jean619215@gmail.com
           </a>
-          <span style={{ width:"1px", height:"12px", background:theme.divider }}></span>
-          <a href="https://www.linkedin.com/in/%E4%BD%B3%E7%A9%8E-%E9%8D%BE-a190511b6/" target="_blank" rel="noopener noreferrer" style={{ fontFamily:FONT_MONO, fontSize:"11px", color:theme.textMuted, textDecoration:"none", letterSpacing:"0.08em" }}>
+          <span style={{ width:"1px", height:"12px", background:THEME.divider }}></span>
+          <a href="https://www.linkedin.com/in/%E4%BD%B3%E7%A9%8E-%E9%8D%BE-a190511b6/" target="_blank" rel="noopener noreferrer" style={{ fontFamily:FONT_MONO, fontSize:"11px", color:THEME.textMuted, textDecoration:"none", letterSpacing:"0.08em" }}>
             LinkedIn
           </a>
-          <span style={{ width:"1px", height:"12px", background:theme.divider }}></span>
-          <span style={{ fontFamily:FONT_MONO, fontSize:"11px", color:theme.textMuted, letterSpacing:"0.08em" }}>
+          <span style={{ width:"1px", height:"12px", background:THEME.divider }}></span>
+          <span style={{ fontFamily:FONT_MONO, fontSize:"11px", color:THEME.textMuted, letterSpacing:"0.08em" }}>
             Taipei, Taiwan
           </span>
         </div>
@@ -731,37 +619,57 @@ function Blog({ theme }) {
   );
 }
 
-function BlogRow({ p, theme, isLast }) {
+function BlogRow({ p, isLast }) {
   const [hov, setHov] = useState(false);
   return (
-    <div onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)} style={{
-      display:"grid", gridTemplateColumns:"76px 88px 1fr 56px", gap:"20px", alignItems:"center",
-      padding:"26px 16px", margin:"0 -16px",
-      borderBottom: isLast ? "none" : `1px solid ${theme.divider}`,
-      cursor:"pointer", background: hov ? `${theme.primary}06` : "transparent", transition:"background 0.25s",
-    }}>
-      <span style={{ fontFamily:FONT_MONO, fontSize:"11px", color:theme.accent }}>{p.date}</span>
-      <span style={{ fontFamily:FONT_H, fontSize:"10px", fontWeight:600, letterSpacing:"0.08em", padding:"3px 10px", border:`1px solid ${theme.primary}40`, color:theme.primary, textAlign:"center" }}>{p.cat}</span>
+    <div
+      onMouseEnter={()=>setHov(true)}
+      onMouseLeave={()=>setHov(false)}
+      style={{
+        display:"grid", gridTemplateColumns:"76px 92px 1fr 64px", gap:"20px", alignItems:"center",
+        padding:"22px 24px",
+        marginBottom:"12px",
+        background: hov ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.4)",
+        border:`1px solid ${THEME.divider}`,
+        borderRadius:"18px",
+        cursor:"pointer",
+        transition:"background 0.25s, transform 0.25s, box-shadow 0.25s",
+        transform: hov ? "translateY(-2px)" : "none",
+        boxShadow: hov ? "0 10px 24px rgba(125,100,168,0.15)" : "none",
+      }}
+    >
+      <span style={{ fontFamily:FONT_MONO, fontSize:"11px", color:THEME.coral, letterSpacing:"0.04em" }}>{p.date}</span>
+      <span style={{
+        fontFamily:FONT_H, fontSize:"10px", fontWeight:600, letterSpacing:"0.08em",
+        padding:"4px 10px", borderRadius:"999px",
+        background:`${THEME.lavender}25`, color:THEME.deepPurple, textAlign:"center",
+      }}>{p.cat}</span>
       <div>
-        <div style={{ fontFamily:FONT_BODY, fontSize:"15px", fontWeight:400, color:theme.text, marginBottom:"1px" }}>{p.title}</div>
-        <div style={{ fontFamily:FONT_H, fontSize:"12px", fontWeight:300, color:theme.textMuted }}>{p.en}</div>
+        <div style={{ fontFamily:FONT_BODY, fontSize:"15px", fontWeight:500, color:THEME.text, marginBottom:"2px" }}>{p.title}</div>
+        <div style={{ fontFamily:FONT_H, fontSize:"12px", fontWeight:400, color:THEME.textSoft }}>{p.en}</div>
       </div>
-      <span style={{ fontFamily:FONT_MONO, fontSize:"11px", color:theme.textMuted, textAlign:"right" }}>{p.min}</span>
+      <span style={{ fontFamily:FONT_MONO, fontSize:"11px", color:THEME.textMuted, textAlign:"right" }}>{p.min}</span>
     </div>
   );
 }
 
 /* ─── SECTION TITLE ──────────────────────────────────── */
-function SectionTitle({ theme, en, ja, zh }) {
+function SectionTitle({ en, ja, zh }) {
   return (
     <div>
-      <div style={{ display:"flex", alignItems:"baseline", gap:"14px", marginBottom:"6px" }}>
-        <h2 style={{ fontFamily:FONT_H, fontSize:"clamp(40px,5vw,64px)", fontWeight:700, color:theme.text, letterSpacing:"-0.04em", lineHeight:1 }}>{en}</h2>
-        <span style={{ fontFamily:FONT_MONO, fontSize:"10px", color:theme.accent, letterSpacing:"0.2em" }}>{ja}</span>
+      <div style={{ display:"flex", alignItems:"baseline", gap:"16px", marginBottom:"8px" }}>
+        <h2 style={{
+          fontFamily:FONT_H, fontSize:"clamp(40px,5.5vw,68px)", fontWeight:700,
+          letterSpacing:"-0.04em", lineHeight:1,
+          background:`linear-gradient(135deg, ${THEME.text} 0%, ${THEME.deepPurple} 60%, ${THEME.coral} 100%)`,
+          WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent",
+          backgroundClip:"text",
+        }}>{en}</h2>
+        <span style={{ fontFamily:FONT_MONO, fontSize:"10px", color:THEME.coral, letterSpacing:"0.22em" }}>{ja}</span>
       </div>
       <div style={{ display:"flex", alignItems:"center", gap:"14px" }}>
-        <span style={{ fontFamily:FONT_BODY, fontSize:"13px", color:theme.textMuted, letterSpacing:"0.08em" }}>{zh}</span>
-        <div style={{ flex:1, height:"1px", background:`linear-gradient(to right,${theme.accent}50,transparent)` }}></div>
+        <span style={{ fontFamily:FONT_BODY, fontSize:"13px", color:THEME.textSoft, letterSpacing:"0.08em" }}>{zh}</span>
+        <div style={{ flex:1, height:"1px", background:`linear-gradient(to right, ${THEME.lavender}60, transparent)` }}></div>
       </div>
     </div>
   );
@@ -769,41 +677,26 @@ function SectionTitle({ theme, en, ja, zh }) {
 
 /* ─── APP ────────────────────────────────────────────── */
 function App() {
-  const [themeName, setThemeName] = useState("sumi");
-  const theme = THEMES[themeName];
-  const [introDone, setIntroDone] = useState(false);
   const [activeSection, setActiveSection] = useState("about");
 
   useEffect(() => {
-    document.body.style.background = theme.bg;
-  }, [theme.bg]);
-
-  useEffect(() => {
-    if (!introDone) return;
     const ids = ["about","resume","portfolio","blog"];
     const obs = new IntersectionObserver(entries => {
       entries.forEach(e => { if (e.isIntersecting) setActiveSection(e.target.id); });
     }, { threshold:0.35 });
     ids.forEach(id => { const el = document.getElementById(id); if (el) obs.observe(el); });
     return () => obs.disconnect();
-  }, [introDone]);
+  }, []);
 
   return (
     <div>
-      <IntroAnimation theme={theme} onDone={() => setIntroDone(true)} />
-      {introDone && (
-        <Nav
-          theme={theme}
-          activeSection={activeSection}
-          themeName={themeName}
-          onToggleTheme={() => setThemeName(t => t === "sumi" ? "washi" : "sumi")}
-        />
-      )}
-      <Hero theme={theme} show={introDone} />
-      <About theme={theme} />
-      <Resume theme={theme} />
-      <Portfolio theme={theme} />
-      <Blog theme={theme} />
+      <BgSilhouettes />
+      <Nav activeSection={activeSection} />
+      <Hero />
+      <About />
+      <Resume />
+      <Portfolio />
+      <Blog />
     </div>
   );
 }
