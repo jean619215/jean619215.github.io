@@ -32,6 +32,7 @@
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(184,157,217,0.5); border-radius: 3px; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   </style>
 </head>
 <body>
@@ -588,8 +589,72 @@ function Experience() {
   );
 }
 
-/* ─── PORTFOLIO (placeholder — to be filled later) ───── */
-function Portfolio() {
+/* ─── PORTFOLIO DATA ─────────────────────────────────── */
+const PORTFOLIO = [
+  {
+    slug: "official-website",
+    title: "NAOS Finance 官網",
+    en: "Official Website",
+    short: "NAOS Finance 官方形象網站，React 開發。",
+    desc: "NAOS Finance 的官方品牌網站，以 React 建構，呈現產品願景、團隊與生態系資訊；負責整體前端架構、頁面切版與互動效果。",
+    tech: ["React", "Styled-components"],
+    images: ["assets/portfolio/official-website/1.png", "assets/portfolio/official-website/2.png"],
+    git: "https://github.com/NAOS-Finance/naos-official-web-v2",
+    demo: "https://naos.finance/",
+    doc: null,
+  },
+  {
+    slug: "defi-dapp",
+    title: "DeFi DApp",
+    en: "NAOS Finance DApp",
+    short: "結合區塊鏈、加密貨幣與真實資產的 DeFi 借貸平台。",
+    desc: "NAOS Finance 的 DeFi 產品，以區塊鏈串接加密貨幣與真實資產（RWA）。負責 DApp 前端開發，整合 ethers.js 與智能合約 ABI，實作錢包連線、抵押借貸、流動性挖礦等核心功能。",
+    tech: ["React", "TypeScript", "ethers.js", "styled-components"],
+    images: ["assets/portfolio/defi-dapp/1.png", "assets/portfolio/defi-dapp/2.png", "assets/portfolio/defi-dapp/3.png"],
+    git: "https://github.com/NAOS-Finance/NAOS-RWA",
+    demo: null,
+    doc: null,
+  },
+  {
+    slug: "zoomi-admin",
+    title: "Zoomi Admin",
+    en: "Zoomi Management Backstage",
+    short: "Zoomi 後台管理系統，React 搭配 Styled-components。",
+    desc: "Zoomi 的後台管理介面，使用 React 與 Styled-components 開發，提供使用者管理、權限控管、資料查詢與報表匯出等功能。",
+    tech: ["React", "Styled-components"],
+    images: ["assets/portfolio/zoomi-admin/1.png", "assets/portfolio/zoomi-admin/2.png", "assets/portfolio/zoomi-admin/3.png"],
+    git: "https://github.com/zoomi2023/admin-zoomi",
+    demo: null,
+    doc: null,
+  },
+  {
+    slug: "web-element",
+    title: "Web Element",
+    en: "Config-driven Web Framework",
+    short: "以設定檔驅動畫面渲染的 React Web 框架。",
+    desc: "為團隊內部開發的客製化 Web 框架，以 config 檔案驅動 layout 渲染，提供遊戲說明畫面與歷史紀錄顯示。重點工作：與團隊共同設計可重用的框架架構、維持程式碼品質、規劃後續維運，並依據業務需求擴充新功能。",
+    tech: ["React", "JavaScript"],
+    images: ["assets/portfolio/web-element/1.png", "assets/portfolio/web-element/2.png"],
+    git: "https://github.com/jean619215/webElement.git",
+    demo: null,
+    doc: "https://jeanchung.notion.site/WebElement-3e1fe5b396614346918410fc5d5d1881",
+  },
+  {
+    slug: "backstage",
+    title: "Backstage Management",
+    en: "Platform Backstage System",
+    short: "平台後台系統，Ant Design + React 開發。",
+    desc: "平台後台管理介面，以 Ant Design 與 React 建構，提供管理員操作合作夥伴、玩家、用戶、交易歷史與財務報表匯出。重點工作：跨國團隊協作、維護程式碼品質、升級 webpack 模組、依業務需求開發新功能。",
+    tech: ["React", "Ant Design", "webpack"],
+    images: ["assets/portfolio/backstage/1.png", "assets/portfolio/backstage/2.png"],
+    git: null,
+    demo: null,
+    doc: null,
+  },
+];
+
+/* ─── PORTFOLIO ──────────────────────────────────────── */
+function Portfolio({ onOpen }) {
   return (
     <section id="portfolio" style={{
       background:THEME.tintAbout, padding:"120px clamp(24px,8vw,120px)",
@@ -601,43 +666,322 @@ function Portfolio() {
         <SectionTitle en="Portfolio" ja="作品" zh="作品集" />
 
         <div style={{
-          marginTop:"60px",
-          background:"rgba(255,255,255,0.5)",
-          backdropFilter:"blur(12px)", WebkitBackdropFilter:"blur(12px)",
-          border:`1.5px dashed ${THEME.lavender}80`,
-          borderRadius:"24px",
-          padding:"clamp(48px, 8vw, 96px) 32px",
-          textAlign:"center",
+          display:"grid",
+          gridTemplateColumns:"repeat(auto-fill, minmax(300px, 1fr))",
+          gap:"24px", marginTop:"60px",
         }}>
-          <div style={{
-            width:"72px", height:"72px", margin:"0 auto 24px",
-            borderRadius:"20px",
-            background:`linear-gradient(135deg, ${THEME.lavender} 0%, ${THEME.pink} 100%)`,
-            display:"flex", alignItems:"center", justifyContent:"center",
-            boxShadow:`0 10px 24px ${THEME.lavender}40`,
-            fontFamily:FONT_H, fontSize:"32px", fontWeight:700, color:"#FFFFFF",
-          }}>✦</div>
-
-          <div style={{
-            fontFamily:FONT_H, fontSize:"clamp(20px, 2.4vw, 26px)", fontWeight:600,
-            color:THEME.text, letterSpacing:"-0.02em", marginBottom:"10px",
-          }}>
-            Coming soon
-          </div>
-          <div style={{
-            fontFamily:FONT_BODY, fontSize:"14px", fontWeight:400,
-            color:THEME.textSoft, letterSpacing:"0.04em", lineHeight:1.85,
-            maxWidth:"460px", margin:"0 auto",
-          }}>
-            個人作品集整理中，敬請期待。<br/>
-            <span style={{ fontFamily:FONT_H, color:THEME.textMuted }}>
-              Personal side projects are being curated — stay tuned.
-            </span>
-          </div>
+          {PORTFOLIO.map(p => <PortfolioCard key={p.slug} p={p} onOpen={onOpen}/>)}
         </div>
       </div>
     </section>
   );
+}
+
+function PortfolioCard({ p, onOpen }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <div
+      onClick={() => onOpen(p)}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      role="button" tabIndex={0}
+      onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen(p); } }}
+      style={{
+        background:"rgba(255,255,255,0.6)",
+        backdropFilter:"blur(10px)", WebkitBackdropFilter:"blur(10px)",
+        border:`1px solid ${hov ? THEME.lavender : THEME.divider}`,
+        borderRadius:"22px",
+        overflow:"hidden",
+        cursor:"pointer",
+        transition:"transform 0.3s, box-shadow 0.3s, border-color 0.3s",
+        transform: hov ? "translateY(-4px)" : "none",
+        boxShadow: hov
+          ? `0 16px 40px ${THEME.lavender}33`
+          : "0 4px 16px rgba(125,100,168,0.08)",
+        display:"flex", flexDirection:"column",
+      }}
+    >
+      <div style={{
+        position:"relative", width:"100%", aspectRatio:"16/10",
+        overflow:"hidden",
+        background:`linear-gradient(135deg, ${THEME.lavender}30 0%, ${THEME.pink}30 100%)`,
+      }}>
+        <img
+          src={p.images[0]}
+          alt={p.title}
+          loading="lazy"
+          style={{
+            width:"100%", height:"100%", objectFit:"cover",
+            transition:"transform 0.5s ease",
+            transform: hov ? "scale(1.04)" : "scale(1)",
+          }}
+        />
+        <div style={{
+          position:"absolute", inset:0,
+          background: hov ? `linear-gradient(180deg, rgba(63,49,96,0) 50%, rgba(63,49,96,0.35) 100%)` : "transparent",
+          transition:"background 0.3s",
+        }}/>
+      </div>
+
+      <div style={{ padding:"22px 24px 24px", flex:1, display:"flex", flexDirection:"column" }}>
+        <div style={{ fontFamily:FONT_H, fontSize:"18px", fontWeight:600, color:THEME.text, marginBottom:"3px" }}>
+          {p.title}
+        </div>
+        <div style={{ fontFamily:FONT_H, fontSize:"12px", fontWeight:500, color:THEME.coral, marginBottom:"10px", letterSpacing:"0.03em" }}>
+          {p.en}
+        </div>
+        <div style={{
+          fontFamily:FONT_BODY, fontSize:"13px", fontWeight:400, lineHeight:1.75,
+          color:THEME.textSoft, marginBottom:"16px", flex:1,
+        }}>
+          {p.short}
+        </div>
+        <div style={{ display:"flex", flexWrap:"wrap", gap:"6px", alignItems:"center", justifyContent:"space-between" }}>
+          <div style={{ display:"flex", flexWrap:"wrap", gap:"6px" }}>
+            {p.tech.slice(0,3).map(t => (
+              <span key={t} style={{
+                fontFamily:FONT_H, fontSize:"10px", fontWeight:500, letterSpacing:"0.04em",
+                padding:"3px 9px", borderRadius:"999px",
+                background:`${THEME.lavender}20`, color:THEME.deepPurple,
+                border:`1px solid ${THEME.lavender}40`,
+              }}>{t}</span>
+            ))}
+          </div>
+          <span style={{
+            fontFamily:FONT_H, fontSize:"11px", fontWeight:500,
+            color: hov ? THEME.coral : THEME.textMuted,
+            transition:"color 0.25s",
+          }}>
+            查看 View →
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── PROJECT DETAIL MODAL ───────────────────────────── */
+function ProjectModal({ project, onClose }) {
+  const [idx, setIdx] = useState(0);
+
+  useEffect(() => {
+    if (!project) return;
+    setIdx(0);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = e => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowRight") setIdx(i => Math.min(i + 1, project.images.length - 1));
+      if (e.key === "ArrowLeft")  setIdx(i => Math.max(i - 1, 0));
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [project, onClose]);
+
+  if (!project) return null;
+  const p = project;
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position:"fixed", inset:0, zIndex:1000,
+        background:"rgba(63, 49, 96, 0.55)",
+        backdropFilter:"blur(8px)", WebkitBackdropFilter:"blur(8px)",
+        display:"flex", alignItems:"center", justifyContent:"center",
+        padding:"clamp(16px, 4vw, 48px)",
+        animation:"fadeIn 0.25s ease",
+      }}
+    >
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{
+          background:"linear-gradient(180deg, rgba(255,250,245,0.98) 0%, rgba(255,238,232,0.98) 100%)",
+          borderRadius:"28px",
+          maxWidth:"1100px", width:"100%",
+          maxHeight:"90vh", overflow:"auto",
+          boxShadow:"0 24px 80px rgba(63,49,96,0.4)",
+          border:`1px solid ${THEME.divider}`,
+          position:"relative",
+        }}
+      >
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          aria-label="Close"
+          style={{
+            position:"sticky", top:"16px", marginLeft:"auto", marginRight:"16px", marginTop:"16px",
+            float:"right", zIndex:2,
+            width:"40px", height:"40px", borderRadius:"50%",
+            background:"rgba(255,255,255,0.95)",
+            border:`1px solid ${THEME.divider}`,
+            cursor:"pointer",
+            fontFamily:FONT_H, fontSize:"18px", fontWeight:500, color:THEME.deepPurple,
+            display:"flex", alignItems:"center", justifyContent:"center",
+            transition:"background 0.2s, transform 0.2s",
+            boxShadow:"0 4px 12px rgba(63,49,96,0.15)",
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = THEME.coral; e.currentTarget.style.color = "#fff"; e.currentTarget.style.transform = "rotate(90deg)"; }}
+          onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.95)"; e.currentTarget.style.color = THEME.deepPurple; e.currentTarget.style.transform = "none"; }}
+        >×</button>
+
+        <div style={{ padding:"clamp(28px, 4vw, 56px)", paddingTop:"24px" }}>
+          {/* Header */}
+          <div style={{ marginBottom:"24px", maxWidth:"calc(100% - 60px)" }}>
+            <div style={{ fontFamily:FONT_MONO, fontSize:"11px", letterSpacing:"0.22em", color:THEME.coral, marginBottom:"10px" }}>
+              — PROJECT
+            </div>
+            <h2 style={{
+              fontFamily:FONT_H, fontSize:"clamp(28px, 4.5vw, 44px)", fontWeight:700,
+              color:THEME.text, letterSpacing:"-0.03em", lineHeight:1.1, marginBottom:"8px",
+            }}>{p.title}</h2>
+            <div style={{ fontFamily:FONT_H, fontSize:"clamp(14px, 1.8vw, 18px)", fontWeight:500, color:THEME.deepPurple, letterSpacing:"0.02em" }}>
+              {p.en}
+            </div>
+          </div>
+
+          {/* Main image */}
+          <div style={{
+            width:"100%", aspectRatio:"16/10",
+            background:"#F4ECE0",
+            borderRadius:"16px", overflow:"hidden",
+            marginBottom:"16px",
+            position:"relative",
+            border:`1px solid ${THEME.divider}`,
+          }}>
+            <img
+              src={p.images[idx]}
+              alt={`${p.title} ${idx+1}`}
+              style={{ width:"100%", height:"100%", objectFit:"contain" }}
+            />
+            {p.images.length > 1 && (
+              <>
+                <button
+                  onClick={() => setIdx(i => Math.max(i - 1, 0))}
+                  disabled={idx === 0}
+                  aria-label="Previous"
+                  style={{
+                    position:"absolute", left:"12px", top:"50%", transform:"translateY(-50%)",
+                    width:"40px", height:"40px", borderRadius:"50%",
+                    background:"rgba(255,255,255,0.92)", border:"none",
+                    cursor: idx === 0 ? "default" : "pointer",
+                    opacity: idx === 0 ? 0.35 : 1,
+                    fontFamily:FONT_H, fontSize:"18px", color:THEME.deepPurple,
+                    boxShadow:"0 4px 12px rgba(63,49,96,0.2)",
+                  }}
+                >‹</button>
+                <button
+                  onClick={() => setIdx(i => Math.min(i + 1, p.images.length - 1))}
+                  disabled={idx === p.images.length - 1}
+                  aria-label="Next"
+                  style={{
+                    position:"absolute", right:"12px", top:"50%", transform:"translateY(-50%)",
+                    width:"40px", height:"40px", borderRadius:"50%",
+                    background:"rgba(255,255,255,0.92)", border:"none",
+                    cursor: idx === p.images.length - 1 ? "default" : "pointer",
+                    opacity: idx === p.images.length - 1 ? 0.35 : 1,
+                    fontFamily:FONT_H, fontSize:"18px", color:THEME.deepPurple,
+                    boxShadow:"0 4px 12px rgba(63,49,96,0.2)",
+                  }}
+                >›</button>
+              </>
+            )}
+          </div>
+
+          {/* Thumbnail strip */}
+          {p.images.length > 1 && (
+            <div style={{ display:"flex", gap:"8px", marginBottom:"32px", flexWrap:"wrap" }}>
+              {p.images.map((src, i) => (
+                <button
+                  key={i}
+                  onClick={() => setIdx(i)}
+                  aria-label={`Image ${i+1}`}
+                  style={{
+                    width:"80px", height:"56px",
+                    borderRadius:"8px", overflow:"hidden",
+                    border: i === idx ? `2px solid ${THEME.coral}` : `1px solid ${THEME.divider}`,
+                    background:"transparent",
+                    cursor:"pointer",
+                    padding:0,
+                    transition:"border-color 0.2s",
+                  }}
+                >
+                  <img src={src} alt="" style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Description */}
+          <div style={{
+            fontFamily:FONT_BODY, fontSize:"15px", fontWeight:400, lineHeight:1.9,
+            color:THEME.text, letterSpacing:"0.03em", marginBottom:"32px",
+          }}>
+            {p.desc}
+          </div>
+
+          {/* Tech tags */}
+          <div style={{ marginBottom:"28px" }}>
+            <div style={{ fontFamily:FONT_MONO, fontSize:"10px", letterSpacing:"0.22em", color:THEME.coral, marginBottom:"12px" }}>
+              — TECH
+            </div>
+            <div style={{ display:"flex", flexWrap:"wrap", gap:"8px" }}>
+              {p.tech.map(t => (
+                <span key={t} style={{
+                  fontFamily:FONT_H, fontSize:"12px", fontWeight:500, letterSpacing:"0.04em",
+                  padding:"6px 14px", borderRadius:"999px",
+                  background:`${THEME.lavender}22`, color:THEME.deepPurple,
+                  border:`1px solid ${THEME.lavender}50`,
+                }}>{t}</span>
+              ))}
+            </div>
+          </div>
+
+          {/* Links */}
+          {(p.git || p.demo || p.doc) && (
+            <div style={{ display:"flex", flexWrap:"wrap", gap:"12px", paddingTop:"24px", borderTop:`1px solid ${THEME.divider}` }}>
+              {p.demo && (
+                <a href={p.demo} target="_blank" rel="noopener noreferrer" style={linkBtnStyle(THEME, true)}>
+                  Live demo →
+                </a>
+              )}
+              {p.git && (
+                <a href={p.git} target="_blank" rel="noopener noreferrer" style={linkBtnStyle(THEME, false)}>
+                  GitHub →
+                </a>
+              )}
+              {p.doc && (
+                <a href={p.doc} target="_blank" rel="noopener noreferrer" style={linkBtnStyle(THEME, false)}>
+                  Document →
+                </a>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function linkBtnStyle(THEME, primary) {
+  return primary ? {
+    fontFamily:FONT_H, fontSize:"13px", fontWeight:600, letterSpacing:"0.05em",
+    padding:"12px 28px", borderRadius:"999px",
+    background:`linear-gradient(135deg, ${THEME.deepPurple} 0%, ${THEME.lavender} 100%)`,
+    color:"#FFFFFF",
+    textDecoration:"none",
+    boxShadow:"0 8px 20px rgba(93,78,143,0.40)",
+  } : {
+    fontFamily:FONT_H, fontSize:"13px", fontWeight:500, letterSpacing:"0.05em",
+    padding:"12px 28px", borderRadius:"999px",
+    background:"rgba(255,255,255,0.6)",
+    color:THEME.deepPurple,
+    border:`1.5px solid ${THEME.lavender}`,
+    textDecoration:"none",
+  };
 }
 
 function ProjectCard({ p }) {
@@ -775,6 +1119,7 @@ function SectionTitle({ en, ja, zh }) {
 /* ─── APP ────────────────────────────────────────────── */
 function App() {
   const [activeSection, setActiveSection] = useState("about");
+  const [openProject, setOpenProject] = useState(null);
 
   useEffect(() => {
     const ids = ["about","resume","experience","portfolio","contact"];
@@ -793,8 +1138,9 @@ function App() {
       <About />
       <Resume />
       <Experience />
-      <Portfolio />
+      <Portfolio onOpen={setOpenProject} />
       <Contact />
+      <ProjectModal project={openProject} onClose={() => setOpenProject(null)} />
     </div>
   );
 }
