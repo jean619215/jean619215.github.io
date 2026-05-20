@@ -17,17 +17,18 @@
       font-family: 'Noto Sans TC', sans-serif;
       overflow-x: hidden;
       color: #3F3160;
-      background:
-        linear-gradient(180deg,
-          #D8E5F5 0%,
-          #E6D5EC 22%,
-          #F2D2DC 45%,
-          #F8C6B3 68%,
-          #F4B5A3 88%,
-          #E6BFD4 100%
-        );
-      background-attachment: fixed;
+      background: #E6D5EC; /* fallback before fixed-bg layer paints */
       min-height: 100vh;
+    }
+    /* Fixed gradient backdrop on its own compositor layer — far cheaper
+       than background-attachment:fixed (which repaints on every scroll). */
+    .bg-gradient {
+      position: fixed; inset: 0; z-index: -2;
+      background: linear-gradient(180deg,
+        #D8E5F5 0%, #E6D5EC 22%, #F2D2DC 45%,
+        #F8C6B3 68%, #F4B5A3 88%, #E6BFD4 100%);
+      will-change: transform;
+      transform: translateZ(0);
     }
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
@@ -36,6 +37,8 @@
   </style>
 </head>
 <body>
+
+<div class="bg-gradient" aria-hidden="true"></div>
 
 <div id="root"></div>
 
@@ -202,6 +205,7 @@ function BgSilhouettes() {
       style={{
         position:"fixed", inset:0, width:"100vw", height:"100vh",
         pointerEvents:"none", zIndex:0, opacity:0.18,
+        willChange:"transform", transform:"translateZ(0)",
       }}
       viewBox="0 0 1200 800"
       preserveAspectRatio="xMidYMax meet"
@@ -238,7 +242,7 @@ function Nav({ activeSection }) {
   return (
     <nav style={{
       position:"fixed", top:0, left:0, right:0, zIndex:100,
-      background:THEME.navBg, backdropFilter:"blur(20px)", WebkitBackdropFilter:"blur(20px)",
+      background:THEME.navBg, backdropFilter:"blur(10px)", WebkitBackdropFilter:"blur(10px)",
       borderBottom:`1px solid ${THEME.divider}`,
       display:"flex", alignItems:"center", justifyContent:"space-between",
       padding:"0 clamp(24px,5vw,80px)", height:"64px",
@@ -460,8 +464,7 @@ function Resume() {
           <h3 style={{ fontFamily:FONT_MONO, fontSize:"11px", letterSpacing:"0.22em", color:THEME.coral, marginBottom:"36px" }}>— WORK EXPERIENCE</h3>
           {jobs.map((j,i) => (
             <div key={i} style={{
-              background:"rgba(255,255,255,0.5)",
-              backdropFilter:"blur(8px)", WebkitBackdropFilter:"blur(8px)",
+              background:"rgba(255,255,255,0.72)",
               borderRadius:"20px",
               border:`1px solid ${THEME.divider}`,
               padding:"28px 32px", marginBottom:"20px",
@@ -687,8 +690,7 @@ function PortfolioCard({ p, onOpen }) {
       role="button" tabIndex={0}
       onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen(p); } }}
       style={{
-        background:"rgba(255,255,255,0.6)",
-        backdropFilter:"blur(10px)", WebkitBackdropFilter:"blur(10px)",
+        background:"rgba(255,255,255,0.78)",
         border:`1px solid ${hov ? THEME.lavender : THEME.divider}`,
         borderRadius:"22px",
         overflow:"hidden",
@@ -991,8 +993,7 @@ function ProjectCard({ p }) {
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
-        background: "rgba(255,255,255,0.55)",
-        backdropFilter:"blur(10px)", WebkitBackdropFilter:"blur(10px)",
+        background: "rgba(255,255,255,0.75)",
         border:`1px solid ${hov ? p.accent + "80" : THEME.divider}`,
         borderRadius:"24px",
         padding:"32px", position:"relative", overflow:"hidden", cursor:"pointer",
@@ -1045,8 +1046,7 @@ function Contact() {
 
         <div style={{
           marginTop:"60px",
-          background:"rgba(255,255,255,0.55)",
-          backdropFilter:"blur(12px)", WebkitBackdropFilter:"blur(12px)",
+          background:"rgba(255,255,255,0.78)",
           border:`1px solid ${THEME.divider}`,
           borderRadius:"24px",
           padding:"48px",
