@@ -71,51 +71,125 @@ const FONT_H    = "'Space Grotesk', sans-serif";
 const FONT_BODY = "'Noto Sans TC', sans-serif";
 const FONT_MONO = "'Space Mono', monospace";
 
-/* ─── ISOMETRIC TOWER (decorative SVG) ───────────────── */
+/* ─── ISOMETRIC ARCHITECTURE (Monument Valley style) ─── */
 function MvTower({ style, opacity = 1 }) {
+  // Color palette (cream / pink / lavender architecture)
+  const c = {
+    creamTop: "#FFF2DB",   creamL: "#F2DDB8",  creamR: "#FFE8C8",
+    peachTop: "#F8C8B0",   peachL: "#E89F8C",  peachR: "#F4B5A3",
+    pinkTop:  "#F8C5D4",   pinkL:  "#E89BB0",  pinkR:  "#F4B5C8",
+    lavTop:   "#CCB3E5",   lavL:   "#9B82C2",  lavR:   "#B89DD9",
+    flag:     "#E0526A",
+    pole:     "#5D4E8F",
+    shadow:   "#7B6BA8",
+    stair:    "#D88B7A",
+  };
+
   return (
-    <svg style={{ position:"absolute", pointerEvents:"none", opacity, ...style }} viewBox="0 0 220 280" xmlns="http://www.w3.org/2000/svg">
-      {/* Soft shadow under tower */}
-      <ellipse cx="110" cy="265" rx="80" ry="8" fill="#B89DD9" opacity="0.25"/>
+    <svg style={{ position:"absolute", pointerEvents:"none", opacity, ...style }} viewBox="0 0 240 320" xmlns="http://www.w3.org/2000/svg">
+      {/* Soft ground shadow */}
+      <ellipse cx="120" cy="305" rx="95" ry="10" fill={c.shadow} opacity="0.22"/>
 
-      {/* Base block */}
-      <polygon points="40,220 110,255 180,220 110,185" fill="#E89F8C"/>
-      <polygon points="40,220 110,255 110,185" fill="#D88B7A" opacity="0.7"/>
-      <polygon points="180,220 110,255 110,185" fill="#F4B5A3"/>
+      {/* ── Wide base platform ── */}
+      <polygon points="30,270 120,310 210,270 120,230" fill={c.creamTop}/>
+      <polygon points="30,270 120,310 120,260" fill={c.creamL} opacity="0.85"/>
+      <polygon points="210,270 120,310 120,260" fill={c.creamR}/>
+      {/* base front edge */}
+      <polygon points="30,270 120,310 120,260 30,225" fill={c.creamL} opacity="0.6"/>
 
-      {/* Mid section */}
-      <polygon points="55,180 110,205 165,180 110,155" fill="#F4B5C8"/>
-      <polygon points="55,180 110,205 110,155" fill="#E89BB0" opacity="0.7"/>
-      <polygon points="165,180 110,205 110,155" fill="#F8C5D4"/>
+      {/* ── Side terrace (right) ── */}
+      <polygon points="135,250 195,280 195,255 135,225" fill={c.peachL} opacity="0.85"/>
+      <polygon points="135,225 195,255 175,245 135,225" fill={c.peachTop}/>
+      <polygon points="135,250 195,280 195,255" fill={c.peachR}/>
 
-      {/* Upper block */}
-      <polygon points="70,140 110,160 150,140 110,120" fill="#B89DD9"/>
-      <polygon points="70,140 110,160 110,120" fill="#9B82C2" opacity="0.7"/>
-      <polygon points="150,140 110,160 110,120" fill="#CCB3E5"/>
+      {/* ── Stair on left side ── */}
+      {[0,1,2,3].map(i => (
+        <g key={i}>
+          <polygon
+            points={`${42 + i*10},${245 - i*8} ${72 + i*10},${260 - i*8} ${72 + i*10},${254 - i*8} ${42 + i*10},${239 - i*8}`}
+            fill={c.stair} opacity="0.55"
+          />
+          <polygon
+            points={`${42 + i*10},${239 - i*8} ${72 + i*10},${254 - i*8} ${72 + i*10},${248 - i*8} ${42 + i*10},${233 - i*8}`}
+            fill={c.peachTop}
+          />
+        </g>
+      ))}
 
-      {/* Top tower */}
-      <polygon points="85,105 110,118 135,105 110,92" fill="#FFE8C8"/>
-      <polygon points="85,105 110,118 110,92" fill="#F0D4A8" opacity="0.7"/>
-      <polygon points="135,105 110,118 110,92" fill="#FFF2DB"/>
+      {/* ── Main square tower (middle) ── */}
+      <polygon points="75,220 120,245 165,220 120,195" fill={c.creamTop}/>
+      <polygon points="75,220 120,245 120,160 75,135" fill={c.creamL}/>
+      <polygon points="165,220 120,245 120,160 165,135" fill={c.creamR}/>
+      <polygon points="75,135 120,160 165,135 120,110" fill={c.creamTop}/>
 
-      {/* Pagoda roof */}
-      <polygon points="92,92 110,72 128,92" fill="#7B6BA8"/>
-      <polygon points="95,72 110,55 125,72" fill="#5D4E8F"/>
+      {/* arched window on left face */}
+      <path d="M 88,200 L 88,180 Q 92,172 100,176 L 100,212 Z" fill={c.lavL} opacity="0.55"/>
+      {/* arched window on right face */}
+      <path d="M 140,176 Q 148,172 152,180 L 152,200 L 140,212 Z" fill={c.peachL} opacity="0.55"/>
 
-      {/* Cherry tree silhouette */}
-      <circle cx="78" cy="92" r="10" fill="#F4B5C8" opacity="0.85"/>
-      <line x1="78" y1="92" x2="78" y2="105" stroke="#7B6BA8" strokeWidth="1.2"/>
+      {/* ── Pink mid tier ── */}
+      <polygon points="85,115 120,135 155,115 120,95" fill={c.pinkTop}/>
+      <polygon points="85,115 120,135 120,80 85,60" fill={c.pinkL}/>
+      <polygon points="155,115 120,135 120,80 155,60" fill={c.pinkR}/>
+      <polygon points="85,60 120,80 155,60 120,40" fill={c.pinkTop}/>
+
+      {/* small window on pink tier */}
+      <rect x="94" y="92" width="6" height="14" fill={c.shadow} opacity="0.55"/>
+      <rect x="140" y="92" width="6" height="14" fill={c.shadow} opacity="0.55"/>
+
+      {/* ── Lavender top spire ── */}
+      <polygon points="100,45 120,55 140,45 120,35" fill={c.lavTop}/>
+      <polygon points="100,45 120,55 120,15 100,5" fill={c.lavL}/>
+      <polygon points="140,45 120,55 120,15 140,5" fill={c.lavR}/>
+      <polygon points="100,5 120,15 140,5 120,-5" fill={c.lavTop}/>
+
+      {/* ── Flag pole + flag at top ── */}
+      <line x1="120" y1="-5" x2="120" y2="-35" stroke={c.pole} strokeWidth="2"/>
+      <path d="M 120,-32 L 150,-26 L 145,-20 L 150,-14 L 120,-18 Z" fill={c.flag}/>
+
+      {/* ── Small attached pavilion (right) ── */}
+      <polygon points="175,185 200,200 200,165 175,150" fill={c.lavL} opacity="0.85"/>
+      <polygon points="175,150 200,165 215,158 190,143" fill={c.lavTop}/>
+      <polygon points="200,165 200,200 215,193 215,158" fill={c.lavR} opacity="0.85"/>
+      {/* pavilion roof flag */}
+      <line x1="195" y1="143" x2="195" y2="128" stroke={c.pole} strokeWidth="1.2"/>
+      <path d="M 195,140 L 210,137 L 207,133 L 210,128 L 195,131 Z" fill={c.flag}/>
+
+      {/* ── Connecting walkway/bridge ── */}
+      <polygon points="155,180 175,170 175,165 155,175" fill={c.creamR} opacity="0.9"/>
+      <polygon points="155,180 175,170 175,175 155,185" fill={c.creamL} opacity="0.7"/>
     </svg>
   );
 }
 
-/* ─── CLOUD / MIST BLOB ──────────────────────────────── */
-function MvCloud({ style, color = "#FFFFFF", opacity = 0.5 }) {
+/* ─── FLUFFY CLOUD (Monument Valley style — stacked puffs) ─ */
+function MvCloud({ style, color = "#FFFFFF", opacity = 0.65 }) {
   return (
-    <svg style={{ position:"absolute", pointerEvents:"none", opacity, ...style }} viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="50" cy="50" rx="40" ry="22" fill={color}/>
-      <ellipse cx="95" cy="42" rx="48" ry="28" fill={color}/>
-      <ellipse cx="145" cy="50" rx="42" ry="24" fill={color}/>
+    <svg style={{ position:"absolute", pointerEvents:"none", opacity, ...style }} viewBox="0 0 240 110" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id={`cl-${color.replace(/[^a-z0-9]/gi,"")}`} cx="50%" cy="40%" r="60%">
+          <stop offset="0%" stopColor="#FFFFFF" stopOpacity="1"/>
+          <stop offset="100%" stopColor={color} stopOpacity="0.95"/>
+        </radialGradient>
+      </defs>
+      <g fill={`url(#cl-${color.replace(/[^a-z0-9]/gi,"")})`}>
+        {/* Base flat row */}
+        <ellipse cx="120" cy="82" rx="100" ry="14"/>
+        {/* Lower puffs */}
+        <circle cx="40"  cy="72" r="22"/>
+        <circle cx="70"  cy="64" r="28"/>
+        <circle cx="200" cy="72" r="22"/>
+        <circle cx="170" cy="62" r="28"/>
+        {/* Mid puffs */}
+        <circle cx="105" cy="52" r="34"/>
+        <circle cx="145" cy="50" r="32"/>
+        {/* Top puffs */}
+        <circle cx="120" cy="32" r="26"/>
+        <circle cx="90"  cy="42" r="22"/>
+        <circle cx="155" cy="38" r="20"/>
+      </g>
+      {/* Soft highlight */}
+      <ellipse cx="115" cy="28" rx="20" ry="8" fill="#FFFFFF" opacity="0.6"/>
     </svg>
   );
 }
@@ -157,7 +231,7 @@ function Nav({ activeSection }) {
     { id:"about",     label:"關於 About" },
     { id:"resume",    label:"履歷 Resume" },
     { id:"portfolio", label:"作品 Work" },
-    { id:"blog",      label:"文章 Blog" },
+    { id:"contact",   label:"聯絡 Contact" },
   ];
   return (
     <nav style={{
@@ -247,15 +321,15 @@ function Hero() {
           <a href="#portfolio" style={{
             fontFamily:FONT_H, fontSize:"13px", letterSpacing:"0.06em", fontWeight:600,
             padding:"15px 38px",
-            background:`linear-gradient(135deg, ${THEME.coral} 0%, ${THEME.pink} 100%)`,
+            background:`linear-gradient(135deg, ${THEME.deepPurple} 0%, ${THEME.lavender} 100%)`,
             color:"#FFFFFF",
             textDecoration:"none", display:"inline-block",
             borderRadius:"999px",
-            boxShadow:"0 8px 24px rgba(232,159,140,0.35)",
+            boxShadow:"0 8px 24px rgba(93,78,143,0.40)",
             transition:"transform 0.25s ease, box-shadow 0.25s ease",
           }}
-          onMouseEnter={e=>{ e.currentTarget.style.transform="translateY(-2px)"; e.currentTarget.style.boxShadow="0 12px 32px rgba(232,159,140,0.45)"; }}
-          onMouseLeave={e=>{ e.currentTarget.style.transform="none"; e.currentTarget.style.boxShadow="0 8px 24px rgba(232,159,140,0.35)"; }}>
+          onMouseEnter={e=>{ e.currentTarget.style.transform="translateY(-2px)"; e.currentTarget.style.boxShadow="0 12px 32px rgba(93,78,143,0.55)"; }}
+          onMouseLeave={e=>{ e.currentTarget.style.transform="none"; e.currentTarget.style.boxShadow="0 8px 24px rgba(93,78,143,0.40)"; }}>
             作品集 Work →
           </a>
           <a href="#about" style={{
@@ -408,11 +482,23 @@ function Resume() {
             background:"rgba(255,255,255,0.5)", borderRadius:"20px",
             border:`1px solid ${THEME.divider}`, padding:"24px 32px",
             display:"grid", gridTemplateColumns:"160px 1fr", gap:"32px",
+            marginBottom:"16px",
           }}>
-            <div style={{ fontFamily:FONT_MONO, fontSize:"11px", color:THEME.coral, letterSpacing:"0.06em", paddingTop:"5px" }}>2018</div>
+            <div style={{ fontFamily:FONT_MONO, fontSize:"11px", color:THEME.coral, letterSpacing:"0.06em", paddingTop:"5px" }}>2016 — 2018</div>
             <div>
               <div style={{ fontFamily:FONT_H, fontSize:"19px", fontWeight:600, color:THEME.text, marginBottom:"3px" }}>國立中央大學</div>
               <div style={{ fontFamily:FONT_H, fontSize:"14px", color:THEME.textSoft }}>機械工程學系碩士 · M.Eng. Mechanical Engineering, National Central University</div>
+            </div>
+          </div>
+          <div style={{
+            background:"rgba(255,255,255,0.5)", borderRadius:"20px",
+            border:`1px solid ${THEME.divider}`, padding:"24px 32px",
+            display:"grid", gridTemplateColumns:"160px 1fr", gap:"32px",
+          }}>
+            <div style={{ fontFamily:FONT_MONO, fontSize:"11px", color:THEME.coral, letterSpacing:"0.06em", paddingTop:"5px" }}>2012 — 2016</div>
+            <div>
+              <div style={{ fontFamily:FONT_H, fontSize:"19px", fontWeight:600, color:THEME.text, marginBottom:"3px" }}>國立中央大學</div>
+              <div style={{ fontFamily:FONT_H, fontSize:"14px", color:THEME.textSoft }}>機械工程學系學士 · B.Eng. Mechanical Engineering, National Central University</div>
             </div>
           </div>
 
@@ -547,109 +633,67 @@ function ProjectCard({ p }) {
   );
 }
 
-/* ─── BLOG ───────────────────────────────────────────── */
-function Blog() {
-  const posts = [
-    { date:"2026.03", cat:"Web3",        title:"用 ethers.js 串接智能合約的實戰心得",         en:"Connecting Smart Contracts with ethers.js",        min:"10 min" },
-    { date:"2026.01", cat:"Performance", title:"加密貨幣交易所前端效能優化實錄",               en:"Optimizing a Crypto Exchange Frontend",             min:"12 min" },
-    { date:"2025.11", cat:"React",       title:"從 React 到 Vue：語法差異與思維轉換",          en:"From React to Vue: Syntax & Mental Model Shifts",  min:"8 min" },
-  ];
+/* ─── CONTACT ────────────────────────────────────────── */
+function Contact() {
   return (
-    <section id="blog" style={{
-      background:THEME.tintBlog, padding:"120px clamp(24px,8vw,120px) 160px",
+    <section id="contact" style={{
+      background:THEME.tintBlog, padding:"140px clamp(24px,8vw,120px) 160px",
       position:"relative", overflow:"hidden",
     }}>
-      <MvCloud style={{ top:"15%", right:"-30px", width:"260px", height:"90px" }} color="#FFFFFF" opacity={0.5}/>
+      <MvCloud style={{ top:"12%", right:"-30px", width:"260px", height:"110px" }} color="#FFFFFF" opacity={0.6}/>
+      <MvCloud style={{ top:"30%", left:"4%", width:"220px", height:"95px" }} color="#FFF4E6" opacity={0.55}/>
 
       <div style={{ maxWidth:"820px", margin:"0 auto", position:"relative", zIndex:1 }}>
-        <SectionTitle en="Blog" ja="ブログ" zh="技術文章" />
-        <div style={{ marginTop:"48px" }}>
-          {posts.map((p,i) => <BlogRow key={i} p={p} isLast={i===posts.length-1} />)}
-        </div>
-      </div>
+        <SectionTitle en="Contact" ja="連絡先" zh="聯絡方式" />
 
-      <div style={{
-        maxWidth:"820px", margin:"80px auto 0",
-        background:"rgba(255,255,255,0.55)",
-        backdropFilter:"blur(12px)", WebkitBackdropFilter:"blur(12px)",
-        border:`1px solid ${THEME.divider}`,
-        borderRadius:"24px",
-        padding:"40px 44px",
-        display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:"24px",
-        position:"relative", zIndex:1,
-      }}>
-        <div>
-          <div style={{ fontFamily:FONT_H, fontSize:"clamp(22px,3vw,30px)", fontWeight:600, color:THEME.text, marginBottom:"6px", letterSpacing:"-0.02em" }}>
-            Let's build something together.
+        <div style={{
+          marginTop:"60px",
+          background:"rgba(255,255,255,0.55)",
+          backdropFilter:"blur(12px)", WebkitBackdropFilter:"blur(12px)",
+          border:`1px solid ${THEME.divider}`,
+          borderRadius:"24px",
+          padding:"48px",
+          display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:"24px",
+        }}>
+          <div>
+            <div style={{ fontFamily:FONT_H, fontSize:"clamp(22px,3vw,30px)", fontWeight:600, color:THEME.text, marginBottom:"8px", letterSpacing:"-0.02em" }}>
+              Let's build something together.
+            </div>
+            <div style={{ fontFamily:FONT_BODY, fontSize:"13px", fontWeight:400, color:THEME.textSoft, letterSpacing:"0.06em" }}>歡迎聯絡合作 · Taipei, Taiwan</div>
           </div>
-          <div style={{ fontFamily:FONT_BODY, fontSize:"13px", fontWeight:400, color:THEME.textSoft, letterSpacing:"0.06em" }}>歡迎聯絡合作 · Taipei, Taiwan</div>
+          <a href="mailto:jean619215@gmail.com" style={{
+            fontFamily:FONT_H, fontSize:"13px", fontWeight:600, letterSpacing:"0.06em",
+            padding:"14px 32px",
+            background:`linear-gradient(135deg, ${THEME.deepPurple} 0%, ${THEME.lavender} 100%)`,
+            color:"#FFFFFF",
+            borderRadius:"999px",
+            textDecoration:"none",
+            boxShadow:"0 8px 20px rgba(93,78,143,0.40)",
+            transition:"transform 0.25s, box-shadow 0.25s", whiteSpace:"nowrap",
+          }}
+          onMouseEnter={e=>{ e.currentTarget.style.transform="translateY(-2px)"; e.currentTarget.style.boxShadow="0 12px 28px rgba(93,78,143,0.55)"; }}
+          onMouseLeave={e=>{ e.currentTarget.style.transform="none"; e.currentTarget.style.boxShadow="0 8px 20px rgba(93,78,143,0.40)"; }}>
+            聯絡我 Say hello
+          </a>
         </div>
-        <a href="mailto:jean619215@gmail.com" style={{
-          fontFamily:FONT_H, fontSize:"13px", fontWeight:600, letterSpacing:"0.06em",
-          padding:"14px 32px",
-          background:`linear-gradient(135deg, ${THEME.coral} 0%, ${THEME.pink} 100%)`,
-          color:"#FFFFFF",
-          borderRadius:"999px",
-          textDecoration:"none",
-          boxShadow:"0 8px 20px rgba(232,159,140,0.35)",
-          transition:"transform 0.25s, box-shadow 0.25s", whiteSpace:"nowrap",
-        }}
-        onMouseEnter={e=>{ e.currentTarget.style.transform="translateY(-2px)"; e.currentTarget.style.boxShadow="0 12px 28px rgba(232,159,140,0.45)"; }}
-        onMouseLeave={e=>{ e.currentTarget.style.transform="none"; e.currentTarget.style.boxShadow="0 8px 20px rgba(232,159,140,0.35)"; }}>
-          聯絡我 Say hello
-        </a>
-      </div>
 
-      <div style={{ maxWidth:"820px", margin:"32px auto 0", position:"relative", zIndex:1 }}>
-        <div style={{ display:"flex", gap:"20px", alignItems:"center", flexWrap:"wrap" }}>
-          <a href="mailto:jean619215@gmail.com" style={{ fontFamily:FONT_MONO, fontSize:"11px", color:THEME.textMuted, textDecoration:"none", letterSpacing:"0.08em" }}>
-            jean619215@gmail.com
-          </a>
-          <span style={{ width:"1px", height:"12px", background:THEME.divider }}></span>
-          <a href="https://www.linkedin.com/in/%E4%BD%B3%E7%A9%8E-%E9%8D%BE-a190511b6/" target="_blank" rel="noopener noreferrer" style={{ fontFamily:FONT_MONO, fontSize:"11px", color:THEME.textMuted, textDecoration:"none", letterSpacing:"0.08em" }}>
-            LinkedIn
-          </a>
-          <span style={{ width:"1px", height:"12px", background:THEME.divider }}></span>
-          <span style={{ fontFamily:FONT_MONO, fontSize:"11px", color:THEME.textMuted, letterSpacing:"0.08em" }}>
-            Taipei, Taiwan
-          </span>
+        <div style={{ marginTop:"32px" }}>
+          <div style={{ display:"flex", gap:"20px", alignItems:"center", flexWrap:"wrap" }}>
+            <a href="mailto:jean619215@gmail.com" style={{ fontFamily:FONT_MONO, fontSize:"11px", color:THEME.textMuted, textDecoration:"none", letterSpacing:"0.08em" }}>
+              jean619215@gmail.com
+            </a>
+            <span style={{ width:"1px", height:"12px", background:THEME.divider }}></span>
+            <a href="https://www.linkedin.com/in/%E4%BD%B3%E7%A9%8E-%E9%8D%BE-a190511b6/" target="_blank" rel="noopener noreferrer" style={{ fontFamily:FONT_MONO, fontSize:"11px", color:THEME.textMuted, textDecoration:"none", letterSpacing:"0.08em" }}>
+              LinkedIn
+            </a>
+            <span style={{ width:"1px", height:"12px", background:THEME.divider }}></span>
+            <span style={{ fontFamily:FONT_MONO, fontSize:"11px", color:THEME.textMuted, letterSpacing:"0.08em" }}>
+              Taipei, Taiwan
+            </span>
+          </div>
         </div>
       </div>
     </section>
-  );
-}
-
-function BlogRow({ p, isLast }) {
-  const [hov, setHov] = useState(false);
-  return (
-    <div
-      onMouseEnter={()=>setHov(true)}
-      onMouseLeave={()=>setHov(false)}
-      style={{
-        display:"grid", gridTemplateColumns:"76px 92px 1fr 64px", gap:"20px", alignItems:"center",
-        padding:"22px 24px",
-        marginBottom:"12px",
-        background: hov ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.4)",
-        border:`1px solid ${THEME.divider}`,
-        borderRadius:"18px",
-        cursor:"pointer",
-        transition:"background 0.25s, transform 0.25s, box-shadow 0.25s",
-        transform: hov ? "translateY(-2px)" : "none",
-        boxShadow: hov ? "0 10px 24px rgba(125,100,168,0.15)" : "none",
-      }}
-    >
-      <span style={{ fontFamily:FONT_MONO, fontSize:"11px", color:THEME.coral, letterSpacing:"0.04em" }}>{p.date}</span>
-      <span style={{
-        fontFamily:FONT_H, fontSize:"10px", fontWeight:600, letterSpacing:"0.08em",
-        padding:"4px 10px", borderRadius:"999px",
-        background:`${THEME.lavender}25`, color:THEME.deepPurple, textAlign:"center",
-      }}>{p.cat}</span>
-      <div>
-        <div style={{ fontFamily:FONT_BODY, fontSize:"15px", fontWeight:500, color:THEME.text, marginBottom:"2px" }}>{p.title}</div>
-        <div style={{ fontFamily:FONT_H, fontSize:"12px", fontWeight:400, color:THEME.textSoft }}>{p.en}</div>
-      </div>
-      <span style={{ fontFamily:FONT_MONO, fontSize:"11px", color:THEME.textMuted, textAlign:"right" }}>{p.min}</span>
-    </div>
   );
 }
 
@@ -680,7 +724,7 @@ function App() {
   const [activeSection, setActiveSection] = useState("about");
 
   useEffect(() => {
-    const ids = ["about","resume","portfolio","blog"];
+    const ids = ["about","resume","portfolio","contact"];
     const obs = new IntersectionObserver(entries => {
       entries.forEach(e => { if (e.isIntersecting) setActiveSection(e.target.id); });
     }, { threshold:0.35 });
@@ -696,7 +740,7 @@ function App() {
       <About />
       <Resume />
       <Portfolio />
-      <Blog />
+      <Contact />
     </div>
   );
 }
