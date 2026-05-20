@@ -228,10 +228,11 @@ function BgSilhouettes() {
 /* ─── NAVIGATION ─────────────────────────────────────── */
 function Nav({ activeSection }) {
   const links = [
-    { id:"about",     label:"關於 About" },
-    { id:"resume",    label:"履歷 Resume" },
-    { id:"portfolio", label:"作品 Work" },
-    { id:"contact",   label:"聯絡 Contact" },
+    { id:"about",      label:"關於 About" },
+    { id:"resume",     label:"履歷 Resume" },
+    { id:"experience", label:"工作經歷 Experience" },
+    { id:"portfolio",  label:"作品集 Portfolio" },
+    { id:"contact",    label:"聯絡 Contact" },
   ];
   return (
     <nav style={{
@@ -318,7 +319,7 @@ function Hero() {
         </p>
 
         <div style={{ display:"flex", gap:"14px", flexWrap:"wrap" }}>
-          <a href="#portfolio" style={{
+          <a href="#experience" style={{
             fontFamily:FONT_H, fontSize:"13px", letterSpacing:"0.06em", fontWeight:600,
             padding:"15px 38px",
             background:`linear-gradient(135deg, ${THEME.deepPurple} 0%, ${THEME.lavender} 100%)`,
@@ -330,7 +331,7 @@ function Hero() {
           }}
           onMouseEnter={e=>{ e.currentTarget.style.transform="translateY(-2px)"; e.currentTarget.style.boxShadow="0 12px 32px rgba(93,78,143,0.55)"; }}
           onMouseLeave={e=>{ e.currentTarget.style.transform="none"; e.currentTarget.style.boxShadow="0 8px 24px rgba(93,78,143,0.40)"; }}>
-            作品集 Work →
+            工作經歷 Experience →
           </a>
           <a href="#about" style={{
             fontFamily:FONT_H, fontSize:"13px", letterSpacing:"0.06em", fontWeight:500,
@@ -526,13 +527,13 @@ function Resume() {
   );
 }
 
-/* ─── PORTFOLIO ──────────────────────────────────────── */
-function Portfolio() {
+/* ─── EXPERIENCE (visual work highlights) ────────────── */
+function Experience() {
   const projects = [
     {
       num:"01",
       title:"加密貨幣交易所",
-      en:"Crypto Exchange Platform",
+      en:"Crypto Exchange Platform · BitstreetX",
       desc:"開發完整的加密貨幣交易所前端，包含即時行情、TradingView K 線圖、訂單簿與交易介面，並導入 JWE 端對端加密保護用戶資料。",
       tags:["Vue","Next.js","Tailwind","Cypress"],
       gradient:`linear-gradient(135deg, ${THEME.coral} 0%, ${THEME.pink} 100%)`,
@@ -541,7 +542,7 @@ function Portfolio() {
     {
       num:"02",
       title:"DeFi 去中心化應用",
-      en:"DeFi DApp — NAOS Finance",
+      en:"DeFi DApp · NAOS Finance",
       desc:"以 React + ethers.js 打造 DeFi 借貸平台前端，直接串接智能合約 ABI，實現錢包連線、資產存取與流動性挖礦功能。",
       tags:["React","TypeScript","ethers.js","styled-components"],
       gradient:`linear-gradient(135deg, ${THEME.lavender} 0%, ${THEME.sky} 100%)`,
@@ -550,7 +551,7 @@ function Portfolio() {
     {
       num:"03",
       title:"網頁遊戲平台",
-      en:"Web Game Platform",
+      en:"Web Game Platform · The Dojo",
       desc:"開發老虎機遊戲功能與整套後台管理系統，以 React 架構支援多款遊戲，整合 Google Analytics 行為埋點追蹤。",
       tags:["React","JavaScript","Node.js","Docker"],
       gradient:`linear-gradient(135deg, ${THEME.cream} 0%, ${THEME.coral} 100%)`,
@@ -559,7 +560,7 @@ function Portfolio() {
     {
       num:"04",
       title:"UI 元件套件",
-      en:"UI Component Library",
+      en:"UI Component Library · NAOS",
       desc:"為 DeFi 產品開發內部 UI node package，建立統一的設計語言，提升跨團隊協作效率並降低重複開發成本。",
       tags:["React","TypeScript","npm"],
       gradient:`linear-gradient(135deg, ${THEME.pink} 0%, ${THEME.lavender} 100%)`,
@@ -567,20 +568,72 @@ function Portfolio() {
     },
   ];
   return (
-    <section id="portfolio" style={{
+    <section id="experience" style={{
       background:THEME.tintWork, padding:"120px clamp(24px,8vw,120px)",
       position:"relative", overflow:"hidden",
     }}>
       <MvCloud style={{ top:"10%", left:"5%", width:"260px", height:"90px" }} color="#FFFFFF" opacity={0.5}/>
 
       <div style={{ maxWidth:"1080px", margin:"0 auto", position:"relative", zIndex:1 }}>
-        <SectionTitle en="Work" ja="作品" zh="作品集" />
+        <SectionTitle en="Experience" ja="経歴" zh="工作經歷" />
         <div style={{
           display:"grid",
           gridTemplateColumns:"repeat(auto-fill,minmax(420px,1fr))",
           gap:"24px", marginTop:"60px",
         }}>
           {projects.map((p,i) => <ProjectCard key={i} p={p} />)}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── PORTFOLIO (placeholder — to be filled later) ───── */
+function Portfolio() {
+  return (
+    <section id="portfolio" style={{
+      background:THEME.tintAbout, padding:"120px clamp(24px,8vw,120px)",
+      position:"relative", overflow:"hidden",
+    }}>
+      <MvCloud style={{ top:"14%", right:"6%", width:"240px", height:"95px" }} color="#FFFFFF" opacity={0.55}/>
+
+      <div style={{ maxWidth:"1080px", margin:"0 auto", position:"relative", zIndex:1 }}>
+        <SectionTitle en="Portfolio" ja="作品" zh="作品集" />
+
+        <div style={{
+          marginTop:"60px",
+          background:"rgba(255,255,255,0.5)",
+          backdropFilter:"blur(12px)", WebkitBackdropFilter:"blur(12px)",
+          border:`1.5px dashed ${THEME.lavender}80`,
+          borderRadius:"24px",
+          padding:"clamp(48px, 8vw, 96px) 32px",
+          textAlign:"center",
+        }}>
+          <div style={{
+            width:"72px", height:"72px", margin:"0 auto 24px",
+            borderRadius:"20px",
+            background:`linear-gradient(135deg, ${THEME.lavender} 0%, ${THEME.pink} 100%)`,
+            display:"flex", alignItems:"center", justifyContent:"center",
+            boxShadow:`0 10px 24px ${THEME.lavender}40`,
+            fontFamily:FONT_H, fontSize:"32px", fontWeight:700, color:"#FFFFFF",
+          }}>✦</div>
+
+          <div style={{
+            fontFamily:FONT_H, fontSize:"clamp(20px, 2.4vw, 26px)", fontWeight:600,
+            color:THEME.text, letterSpacing:"-0.02em", marginBottom:"10px",
+          }}>
+            Coming soon
+          </div>
+          <div style={{
+            fontFamily:FONT_BODY, fontSize:"14px", fontWeight:400,
+            color:THEME.textSoft, letterSpacing:"0.04em", lineHeight:1.85,
+            maxWidth:"460px", margin:"0 auto",
+          }}>
+            個人作品集整理中，敬請期待。<br/>
+            <span style={{ fontFamily:FONT_H, color:THEME.textMuted }}>
+              Personal side projects are being curated — stay tuned.
+            </span>
+          </div>
         </div>
       </div>
     </section>
@@ -724,7 +777,7 @@ function App() {
   const [activeSection, setActiveSection] = useState("about");
 
   useEffect(() => {
-    const ids = ["about","resume","portfolio","contact"];
+    const ids = ["about","resume","experience","portfolio","contact"];
     const obs = new IntersectionObserver(entries => {
       entries.forEach(e => { if (e.isIntersecting) setActiveSection(e.target.id); });
     }, { threshold:0.35 });
@@ -739,6 +792,7 @@ function App() {
       <Hero />
       <About />
       <Resume />
+      <Experience />
       <Portfolio />
       <Contact />
     </div>
