@@ -198,6 +198,69 @@ function MvCloud({ style, color = "#FFFFFF", opacity = 0.65 }) {
   );
 }
 
+/* ─── SIMPLE AVATAR ICON (About card) ────────────────── */
+function AvatarIcon({ style, opacity = 1 }) {
+  return (
+    <svg style={{ position:"absolute", pointerEvents:"none", opacity, ...style }} viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg">
+      {/* Soft pastel halo behind figure */}
+      <circle cx="100" cy="115" r="78" fill="#FFFFFF" opacity="0.18"/>
+      {/* Head */}
+      <circle cx="100" cy="92" r="34" fill="#FFFFFF" opacity="0.95"/>
+      {/* Shoulders / body */}
+      <path d="M 38,220 Q 38,160 100,150 Q 162,160 162,220 Z" fill="#FFFFFF" opacity="0.95"/>
+      {/* Inner subtle shading on head + body */}
+      <circle cx="112" cy="92" r="34" fill="#7B6BA8" opacity="0.10"/>
+      <path d="M 38,220 Q 38,160 100,150 Q 162,160 162,220 Z" fill="#7B6BA8" opacity="0.08"/>
+    </svg>
+  );
+}
+
+/* ─── PENROSE TRIANGLE (Hero impossible figure) ──────── */
+function PenroseTriangle({ style, opacity = 1 }) {
+  // Three colored bars folded into an impossible triangle.
+  // Each bar shows three faces (top / left-front / right-front) shaded differently.
+  return (
+    <svg style={{ position:"absolute", pointerEvents:"none", opacity, ...style }} viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        {/* Soft drop shadow */}
+        <filter id="penrose-shadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
+          <feOffset in="blur" dx="0" dy="6" result="offsetBlur"/>
+          <feFlood floodColor="#7B6BA8" floodOpacity="0.18"/>
+          <feComposite in2="offsetBlur" operator="in"/>
+          <feMerge>
+            <feMergeNode/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+      </defs>
+
+      <g filter="url(#penrose-shadow)">
+        {/* Bottom bar (coral / pink) */}
+        <polygon points="60,225 240,225 222,210 78,210" fill="#FFE8C8"/>
+        <polygon points="60,225 240,225 222,240 78,240" fill="#E89F8C"/>
+        <polygon points="60,225 78,210 78,240" fill="#F4B5A3"/>
+        <polygon points="240,225 222,210 222,240" fill="#D88B7A"/>
+
+        {/* Left bar (lavender) — rising from bottom-left to top */}
+        <polygon points="60,225 150,75 132,75 78,210" fill="#CCB3E5"/>
+        <polygon points="60,225 78,210 78,225" fill="#9B82C2"/>
+        <polygon points="150,75 132,75 132,90" fill="#B89DD9"/>
+        <polygon points="78,210 132,75 132,90 78,225" fill="#B89DD9"/>
+
+        {/* Right bar (pink) — rising from bottom-right back up to top */}
+        <polygon points="240,225 150,75 168,75 222,210" fill="#F8C5D4"/>
+        <polygon points="240,225 222,210 222,225" fill="#E89BB0"/>
+        <polygon points="168,75 150,75 168,90" fill="#F4B5C8"/>
+        <polygon points="222,210 168,75 168,90 222,225" fill="#F4B5C8"/>
+
+        {/* Tiny accent dot at apex */}
+        <circle cx="150" cy="82" r="4" fill="#E0526A"/>
+      </g>
+    </svg>
+  );
+}
+
 /* ─── BACKGROUND PAGODA SILHOUETTES ──────────────────── */
 function BgSilhouettes() {
   return (
@@ -279,32 +342,26 @@ function Hero() {
       <MvCloud style={{ top:"22%", right:"-40px", width:"280px", height:"100px" }} color="#FFFFFF" opacity={0.5}/>
       <MvCloud style={{ top:"40%", left:"20%", width:"200px", height:"80px" }} color="#FFF4E6" opacity={0.45}/>
 
-      <MvTower style={{ bottom:"6%", right:"6%", width:"clamp(220px, 28vw, 360px)", height:"clamp(280px, 36vw, 460px)" }} opacity={0.95}/>
-      <MvTower style={{ bottom:"4%", left:"4%", width:"clamp(140px, 16vw, 220px)", height:"clamp(180px, 20vw, 280px)" }} opacity={0.4}/>
+      <PenroseTriangle style={{ bottom:"8%", right:"6%", width:"clamp(240px, 30vw, 400px)", height:"clamp(240px, 30vw, 400px)" }} opacity={0.95}/>
+      <PenroseTriangle style={{ bottom:"4%", left:"4%", width:"clamp(120px, 14vw, 180px)", height:"clamp(120px, 14vw, 180px)" }} opacity={0.35}/>
 
       <div style={{
         maxWidth:"820px", position:"relative", zIndex:2, width:"100%",
       }}>
-        <div style={{
-          fontFamily:FONT_MONO, fontSize:"11px", letterSpacing:"0.28em",
-          color:THEME.deepPurple, marginBottom:"32px",
-          display:"flex", alignItems:"center", gap:"12px",
-        }}>
-          <span style={{ display:"inline-block", width:"40px", height:"1px", background:THEME.deepPurple, opacity:0.6 }}></span>
-          前端工程師 · Frontend Engineer
-        </div>
-
         <h1 style={{
           fontFamily:FONT_H, fontSize:"clamp(60px,9vw,124px)", fontWeight:700,
-          lineHeight:0.95, color:THEME.text, letterSpacing:"-0.045em",
+          lineHeight:1.05, color:THEME.text, letterSpacing:"-0.045em",
           marginBottom:"4px",
+          paddingBottom:"0.04em",
         }}>
           Jean
         </h1>
         <h1 style={{
           fontFamily:FONT_H, fontSize:"clamp(60px,9vw,124px)", fontWeight:300,
-          lineHeight:0.95, letterSpacing:"-0.045em",
-          marginBottom:"44px",
+          lineHeight:1.2, letterSpacing:"-0.045em",
+          marginBottom:"36px",
+          paddingBottom:"0.22em",
+          overflow:"visible",
           background:`linear-gradient(135deg, ${THEME.coral} 0%, ${THEME.lavender} 100%)`,
           WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent",
           backgroundClip:"text",
@@ -314,12 +371,12 @@ function Hero() {
 
         <p style={{
           fontFamily:FONT_BODY, fontSize:"clamp(15px,1.7vw,18px)", fontWeight:400,
-          lineHeight:1.95, color:THEME.textSoft, maxWidth:"480px",
+          lineHeight:1.95, color:THEME.textSoft, maxWidth:"520px",
           marginBottom:"52px", letterSpacing:"0.03em",
         }}>
-          6 年以上前端開發經驗，專注 React 生態系、效能優化與 Web3 應用。<br/>
+          6 年以上開發經驗，專注 React 生態系與效能優化；熟悉 Web3 智能合約串接，並具備 RESTful API 與第三方 LLM 平台整合的實戰經驗。<br/>
           <span style={{ fontFamily:FONT_H, fontSize:"0.88em", fontWeight:400, color:THEME.textMuted }}>
-            6+ years building performant web apps — from crypto exchanges to DeFi DApps.
+            6+ years building performant web apps — from crypto exchanges and DeFi DApps to AI-powered learning platforms integrating LLMs.
           </span>
         </p>
 
@@ -336,7 +393,7 @@ function Hero() {
           }}
           onMouseEnter={e=>{ e.currentTarget.style.transform="translateY(-2px)"; e.currentTarget.style.boxShadow="0 12px 32px rgba(93,78,143,0.55)"; }}
           onMouseLeave={e=>{ e.currentTarget.style.transform="none"; e.currentTarget.style.boxShadow="0 8px 24px rgba(93,78,143,0.40)"; }}>
-            工作經歷 Experience →
+            工作經歷 Experience
           </a>
           <a href="#about" style={{
             fontFamily:FONT_H, fontSize:"13px", letterSpacing:"0.06em", fontWeight:500,
@@ -383,7 +440,7 @@ function About() {
               boxShadow:"0 20px 60px rgba(125,100,168,0.25)",
               display:"flex", alignItems:"center", justifyContent:"center",
             }}>
-              <MvTower style={{ inset:"10%", width:"80%", height:"80%" }} opacity={0.95}/>
+              <AvatarIcon style={{ inset:"10%", width:"80%", height:"80%" }} opacity={1}/>
               <span style={{
                 position:"absolute", bottom:"18px", left:"50%", transform:"translateX(-50%)",
                 fontFamily:FONT_MONO, fontSize:"10px", color:"#FFFFFF",
@@ -569,10 +626,10 @@ function Experience() {
     },
     {
       num:"04",
-      title:"UI 元件套件",
-      en:"UI Component Library · NAOS",
-      desc:"為 DeFi 產品開發內部 UI node package，建立統一的設計語言，提升跨團隊協作效率並降低重複開發成本。",
-      tags:["React","TypeScript","npm"],
+      title:"AI 應用",
+      en:"AI Application · Canopy School",
+      desc:"串接 LLM 服務，為學生與老師打造客製化的 AI 教學平台，提供自動產題、白板教學、語音互動等個人化學習體驗。",
+      tags:["Next.js","LLM","TTS / STT"],
       gradient:`linear-gradient(135deg, ${THEME.pink} 0%, ${THEME.lavender} 100%)`,
       accent:THEME.lavender,
     },
@@ -652,8 +709,8 @@ const PORTFOLIO = [
     desc: "NAOS Finance 的官方品牌網站，以 React 建構，呈現產品願景、團隊與生態系資訊；負責整體前端架構、頁面切版與互動效果。",
     tech: ["React", "Styled-components"],
     images: ["assets/portfolio/official-website/1.png", "assets/portfolio/official-website/2.png"],
-    git: "https://github.com/NAOS-Finance/naos-official-web-v2",
-    demo: "https://naos.finance/",
+    git: null,
+    demo: null,
     doc: null,
   },
   {
@@ -664,7 +721,7 @@ const PORTFOLIO = [
     desc: "NAOS Finance 的 DeFi 產品，以區塊鏈串接加密貨幣與真實資產（RWA）。負責 DApp 前端開發，整合 ethers.js 與智能合約 ABI，實作錢包連線、抵押借貸、流動性挖礦等核心功能。",
     tech: ["React", "TypeScript", "ethers.js", "styled-components"],
     images: ["assets/portfolio/defi-dapp/1.png", "assets/portfolio/defi-dapp/2.png", "assets/portfolio/defi-dapp/3.png"],
-    git: "https://github.com/NAOS-Finance/NAOS-RWA",
+    git: null,
     demo: null,
     doc: null,
   },
@@ -676,7 +733,7 @@ const PORTFOLIO = [
     desc: "Zoomi 的後台管理介面，使用 React 與 Styled-components 開發，提供使用者管理、權限控管、資料查詢與報表匯出等功能。",
     tech: ["React", "Styled-components"],
     images: ["assets/portfolio/zoomi-admin/1.png", "assets/portfolio/zoomi-admin/2.png", "assets/portfolio/zoomi-admin/3.png"],
-    git: "https://github.com/zoomi2023/admin-zoomi",
+    git: null,
     demo: null,
     doc: null,
   },
@@ -688,7 +745,7 @@ const PORTFOLIO = [
     desc: "為團隊內部開發的客製化 Web 框架，以 config 檔案驅動 layout 渲染，提供遊戲說明畫面與歷史紀錄顯示。重點工作：與團隊共同設計可重用的框架架構、維持程式碼品質、規劃後續維運，並依據業務需求擴充新功能。",
     tech: ["React", "JavaScript"],
     images: ["assets/portfolio/web-element/1.png", "assets/portfolio/web-element/2.png"],
-    git: "https://github.com/jean619215/webElement.git",
+    git: null,
     demo: null,
     doc: "https://jeanchung.notion.site/WebElement-3e1fe5b396614346918410fc5d5d1881",
   },
