@@ -398,13 +398,13 @@ function About() {
               fontFamily:FONT_BODY, fontSize:"clamp(15px,1.6vw,17px)", fontWeight:400,
               lineHeight:2.0, color:THEME.text, letterSpacing:"0.04em", marginBottom:"20px",
             }}>
-              你好，我是 Jean。擁有 6 年以上前端開發經驗，曾參與加密貨幣交易所、DeFi 去中心化應用及線上遊戲平台的開發。熱衷於效能優化、乾淨的程式架構，以及與設計師緊密協作打造流暢的使用者體驗。
+              你好，我是 Jean。擁有 6 年以上前端開發經驗，曾參與加密貨幣交易所、DeFi 去中心化應用、AI 個人化學習平台與線上遊戲平台的開發。熟悉 React 生態系與 ethers.js 智能合約串接，並有 RESTful API 與第三方 LLM 平台服務整合的實戰經驗。
             </p>
             <p style={{
               fontFamily:FONT_H, fontSize:"clamp(14px,1.5vw,16px)", fontWeight:400,
               lineHeight:1.75, color:THEME.textSoft, marginBottom:"40px",
             }}>
-              Hi — I'm a frontend engineer based in Taipei with experience across crypto exchanges, DeFi DApps, and web game platforms. I care deeply about performance, clean architecture, and pixel-perfect execution.
+              Hi — I'm a frontend engineer based in Taipei with experience across crypto exchanges, DeFi DApps, AI learning platforms, and web games. Proficient in React, ethers.js ABI concatenation, RESTful APIs, and third-party LLM platform integrations.
             </p>
             <div style={{ display:"flex", flexWrap:"wrap", gap:"8px" }}>
               {skills.map(s => (
@@ -524,6 +524,12 @@ function Resume() {
                 Git · Docker · Postman · VS Code · Cypress · Node.js
               </div>
             </div>
+            <div style={{ display:"grid", gridTemplateColumns:"160px 1fr", gap:"32px", marginTop:"16px" }}>
+              <div style={{ fontFamily:FONT_MONO, fontSize:"11px", color:THEME.coral, letterSpacing:"0.06em", paddingTop:"5px" }}>AI Tools</div>
+              <div style={{ fontFamily:FONT_BODY, fontSize:"14px", fontWeight:400, lineHeight:1.85, color:THEME.textSoft }}>
+                Cursor · GitHub Copilot · Claude Code
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -594,6 +600,50 @@ function Experience() {
 
 /* ─── PORTFOLIO DATA ─────────────────────────────────── */
 const PORTFOLIO = [
+  {
+    slug: "saga-finance",
+    title: "Saga Finance",
+    en: "Full-stack Web3 RWA Platform",
+    short: "全端 Web3 / RWA 真實資產代幣化平台。",
+    desc: "Saga Finance 為真實資產（RWA）代幣化平台，使用者可購買、領取股票與分紅。負責全端開發，涵蓋前端 DApp、後端 API 與智能合約串接。",
+    tech: ["Next.js", "TypeScript", "Web3", "ethers.js", "RWA"],
+    images: [
+      "assets/portfolio/saga-finance/1.png",
+      "assets/portfolio/saga-finance/2.png",
+      "assets/portfolio/saga-finance/3.png",
+      "assets/portfolio/saga-finance/4.png",
+    ],
+    git: null,
+    demo: null,
+    doc: null,
+    videos: [
+      { label: "User claim stock", url: "https://youtu.be/a6lUVKet4qo" },
+      { label: "股票紅利", url: "https://youtu.be/Zt5OdJ7_Fr4" },
+      { label: "用戶購買 stock", url: "https://youtu.be/2uzbnozIkd0" },
+    ],
+  },
+  {
+    slug: "canopy-school",
+    title: "Canopy School",
+    en: "Personalized AI Learning",
+    short: "AI 個人化學習平台，老師自動產題、白板教學含語音互動。",
+    desc: "個人化 AI 學習平台。提供老師「自動產題給學生測驗」與「白板教學模式（含語音）」兩大核心功能。整合 LLM 服務、Text-to-Speech 與 Speech-to-Text 完成 AI 對話與評分流程。",
+    tech: ["Next.js", "LLM", "Text-to-Speech", "Speech-to-Text"],
+    images: [
+      "assets/portfolio/canopy-school/1.png",
+      "assets/portfolio/canopy-school/2.png",
+      "assets/portfolio/canopy-school/3.png",
+    ],
+    git: null,
+    demo: null,
+    doc: null,
+    videos: [
+      { label: "How to use AI to ask question", url: "https://youtu.be/kYCM8YFc1GQ" },
+      { label: "How to grade assignment guide", url: "https://youtu.be/_-ERQgSCKeo" },
+      { label: "Demo 3", url: "https://youtu.be/ozZix4xlHcs" },
+      { label: "Demo 4", url: "https://youtu.be/_yB-M1_lVLA" },
+    ],
+  },
   {
     slug: "official-website",
     title: "NAOS Finance 官網",
@@ -941,6 +991,31 @@ function ProjectModal({ project, onClose }) {
               ))}
             </div>
           </div>
+
+          {/* Demo videos */}
+          {p.videos && p.videos.length > 0 && (
+            <div style={{ marginBottom:"28px" }}>
+              <div style={{ fontFamily:FONT_MONO, fontSize:"10px", letterSpacing:"0.22em", color:THEME.coral, marginBottom:"12px" }}>
+                — DEMO VIDEOS
+              </div>
+              <div style={{ display:"flex", flexWrap:"wrap", gap:"8px" }}>
+                {p.videos.map((v,i) => (
+                  <a key={i} href={v.url} target="_blank" rel="noopener noreferrer"
+                    style={{
+                      fontFamily:FONT_H, fontSize:"12px", fontWeight:500, letterSpacing:"0.03em",
+                      padding:"8px 14px", borderRadius:"999px",
+                      background:`${THEME.coral}15`, color:THEME.coral,
+                      border:`1px solid ${THEME.coral}40`,
+                      textDecoration:"none",
+                      transition:"background 0.2s, color 0.2s",
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.background = THEME.coral; e.currentTarget.style.color = "#fff"; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = `${THEME.coral}15`; e.currentTarget.style.color = THEME.coral; }}
+                  >▶ {v.label}</a>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Links */}
           {(p.git || p.demo || p.doc) && (
