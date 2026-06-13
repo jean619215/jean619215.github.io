@@ -34,6 +34,11 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(184,157,217,0.5); border-radius: 3px; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes livePulse {
+      0%   { box-shadow: 0 0 0 0 rgba(255,255,255,0.7); }
+      70%  { box-shadow: 0 0 0 6px rgba(255,255,255,0); }
+      100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+    }
   </style>
 </head>
 <body>
@@ -828,6 +833,36 @@ function PortfolioCard({ p, onOpen }) {
           background: hov ? `linear-gradient(180deg, rgba(63,49,96,0) 50%, rgba(63,49,96,0.35) 100%)` : "transparent",
           transition:"background 0.3s",
         }}/>
+
+        {p.demo && (
+          <a
+            href={p.demo}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={e => e.stopPropagation()}
+            title="開啟線上 Demo（另開視窗）"
+            style={{
+              position:"absolute", top:"12px", right:"12px",
+              fontFamily:FONT_H, fontSize:"11px", fontWeight:600, letterSpacing:"0.04em",
+              padding:"7px 14px", borderRadius:"999px",
+              background:`linear-gradient(135deg, ${THEME.coral} 0%, ${THEME.pink} 100%)`,
+              color:"#FFFFFF", textDecoration:"none",
+              boxShadow:"0 4px 14px rgba(232,159,140,0.5)",
+              display:"flex", alignItems:"center", gap:"6px",
+              transition:"transform 0.2s, box-shadow 0.2s",
+            }}
+            onMouseEnter={e=>{ e.currentTarget.style.transform="scale(1.06)"; e.currentTarget.style.boxShadow="0 6px 18px rgba(232,159,140,0.65)"; }}
+            onMouseLeave={e=>{ e.currentTarget.style.transform="scale(1)"; e.currentTarget.style.boxShadow="0 4px 14px rgba(232,159,140,0.5)"; }}
+          >
+            <span style={{
+              width:"7px", height:"7px", borderRadius:"50%",
+              background:"#FFFFFF", display:"inline-block",
+              boxShadow:"0 0 0 0 rgba(255,255,255,0.7)",
+              animation:"livePulse 1.8s ease-out infinite",
+            }}/>
+            Live demo ↗
+          </a>
+        )}
       </div>
 
       <div style={{ padding:"22px 24px 24px", flex:1, display:"flex", flexDirection:"column" }}>
