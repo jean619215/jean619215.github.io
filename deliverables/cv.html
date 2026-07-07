@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Jean Chung 鍾佳穎 — 履歷</title>
+<style>
+  :root{
+    --ink:#1c1c1a; --sec:#565651; --muted:#8a8a83;
+    --accent:#185FA5; --border:#e6e5e0; --chip:#f4f3ee; --page:#ffffff;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html,body{ background:#eceae3; }
+  body{
+    font-family:"Helvetica Neue", Arial, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    color:var(--ink); line-height:1.6; -webkit-font-smoothing:antialiased;
+  }
+  .page{
+    width:210mm; min-height:297mm; margin:16px auto; background:var(--page);
+    padding:12mm 14mm; box-shadow:0 2px 16px rgba(0,0,0,.12);
+  }
+  .head{ border-bottom:1px solid var(--border); padding-bottom:11px; margin-bottom:15px; }
+  .name{ font-size:27px; font-weight:600; letter-spacing:-.01em; }
+  .name small{ font-size:16px; font-weight:400; color:var(--sec); margin-left:8px; }
+  .title{ font-size:14px; color:var(--sec); margin-top:2px; }
+  .contact{ display:flex; flex-wrap:wrap; gap:6px 18px; margin-top:10px; font-size:12.5px; color:var(--sec); }
+  .contact a{ color:var(--accent); text-decoration:none; }
+  .grid{ display:grid; grid-template-columns:1.55fr 1fr; gap:26px; }
+  .sec-label{ font-size:11px; font-weight:600; color:var(--accent); letter-spacing:.05em; margin-bottom:9px; }
+  .summary{ font-size:12.5px; color:var(--sec); line-height:1.55; margin-bottom:15px; }
+  .job{ margin-bottom:12px; page-break-inside:avoid; }
+  .job:last-child{ margin-bottom:0; }
+  .side-sec:last-child{ margin-bottom:0; }
+  .job-top{ display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
+  .job-role{ font-size:14.5px; font-weight:600; }
+  .job-role span{ font-size:12px; font-weight:400; color:var(--muted); }
+  .job-date{ font-size:12px; color:var(--muted); white-space:nowrap; }
+  .job-co{ font-size:12.5px; color:var(--accent); margin:1px 0 6px; }
+  .job ul{ padding-left:16px; font-size:12.5px; color:var(--sec); line-height:1.5; }
+  .job li{ margin-bottom:1px; }
+  .pills{ display:flex; flex-wrap:wrap; gap:5px; margin-top:7px; }
+  .tp{ font-size:11px; color:var(--sec); background:var(--chip); border:.5px solid var(--border); border-radius:5px; padding:2px 7px; white-space:nowrap; }
+  .skill-group{ margin-bottom:14px; }
+  .skill-group .lbl{ font-size:12px; color:var(--muted); margin-bottom:5px; }
+  .side-sec{ margin-bottom:20px; }
+  .ai-list{ padding-left:15px; font-size:12px; color:var(--sec); line-height:1.5; }
+  .ai-list li{ margin-bottom:4px; }
+  .edu{ margin-bottom:10px; }
+  .edu .s{ font-size:13px; font-weight:600; }
+  .edu .d{ font-size:12px; color:var(--sec); }
+  .edu .y{ font-size:11.5px; color:var(--muted); }
+  @media print{
+    html,body{ background:#fff; }
+    .page{ width:auto; min-height:auto; margin:0; padding:0; box-shadow:none; }
+    @page{ size:A4; margin:9mm 12mm; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="head">
+    <div class="name">Jean Chung<small>鍾佳穎</small></div>
+    <div class="title">前端工程師 · 軟體工程師 · 全端工程師</div>
+    <div class="contact">
+      <span>jean619215@gmail.com</span>
+      <span>+886-910-495-185</span>
+      <span>Taipei, Taiwan</span>
+      <a href="https://www.linkedin.com/in/%E4%BD%B3%E7%A9%8E-%E9%8D%BE-a190511b6/">LinkedIn</a>
+      <a href="https://jean619215.github.io/">jean619215.github.io</a>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <div>
+      <div class="sec-label">簡介</div>
+      <div class="summary">
+        6 年以上 Web 應用開發經驗，橫跨加密貨幣交易所、DeFi、AI 平台與網頁遊戲。核心為 React 生態系與 TypeScript，並具備 Next.js / Express / PostgreSQL 全端能力；熟悉智能合約 ABI 串接、RESTful API 與第三方 LLM 平台整合。溝通協作良好，具國際化環境工作經驗。
+      </div>
+
+      <div class="sec-label">工作經歷</div>
+
+      <div class="job">
+        <div class="job-top">
+          <span class="job-role">前端工程師</span>
+          <span class="job-date">2023/02 – 至今</span>
+        </div>
+        <div class="job-co">BitstreetX · 加密貨幣交易所</div>
+        <ul>
+          <li>以 Vue／React 建置與維護網頁應用</li>
+          <li>開發現貨／合約交易介面、訂單簿與下單流程，整合 TradingView K 線圖表</li>
+          <li>以 Lighthouse／DevTools 檢測，減少重繪與資源優化改善載入與互動順暢度</li>
+          <li>以 JWE 實作端對端加密；Playwright 建立 E2E 自動化測試涵蓋核心交易流程</li>
+        </ul>
+        <div class="pills"><span class="tp">Vue</span><span class="tp">Next.js</span><span class="tp">Tailwind</span><span class="tp">Playwright</span><span class="tp">Git</span></div>
+      </div>
+
+      <div class="job">
+        <div class="job-top">
+          <span class="job-role">全端工程師 <span>（兼職）</span></span>
+          <span class="job-date">2025/01 – 2026/03</span>
+        </div>
+        <div class="job-co">Saga · Web3 / AI 新創</div>
+        <ul>
+          <li>以 Next.js、Express、PostgreSQL 開發全端 RWA 平台，含前後台與智能合約串接</li>
+          <li>設計資料庫 schema 與 RESTful API，串接前後端資料流</li>
+          <li>打造 AI 教學平台，串接 LLM 與語音（TTS/STT），實作老師產題、學生複習</li>
+        </ul>
+        <div class="pills"><span class="tp">Next.js</span><span class="tp">Express</span><span class="tp">PostgreSQL</span><span class="tp">LLM</span><span class="tp">Firebase</span></div>
+      </div>
+
+      <div class="job">
+        <div class="job-top">
+          <span class="job-role">前端工程師</span>
+          <span class="job-date">2022/03 – 2022/11</span>
+        </div>
+        <div class="job-co">NAOS Finance · DeFi</div>
+        <ul>
+          <li>以 React 建置官方網站</li>
+          <li>優化首屏圖片資源（6.5MB → 1.2MB），行動版 Lighthouse 62 → 79、FCP 3.7s → 0.8s</li>
+          <li>開發可重用 UI 元件套件（npm package），供多專案共用</li>
+          <li>以 React 與 ethers.js 建置 DeFi DApp，串接智能合約 ABI 與後端 API</li>
+        </ul>
+        <div class="pills"><span class="tp">React</span><span class="tp">TypeScript</span><span class="tp">ethers.js</span><span class="tp">styled-components</span></div>
+      </div>
+
+      <div class="job">
+        <div class="job-top">
+          <span class="job-role">前端工程師</span>
+          <span class="job-date">2018/12 – 2022/01</span>
+        </div>
+        <div class="job-co">The Dojo · 網頁遊戲</div>
+        <ul>
+          <li>以 React 開發網頁遊戲平台前端，串接後端 API；平台支援 30+ 款遊戲、跨 4 國團隊協作</li>
+          <li>開發拉霸機（slot game）遊戲功能與互動流程</li>
+          <li>開發與維護後台管理系統（帳號、遊戲設定、報表）</li>
+          <li>支援後端整合（Node.js），導入 Google Analytics 事件埋點</li>
+        </ul>
+        <div class="pills"><span class="tp">React</span><span class="tp">JavaScript</span><span class="tp">Node.js</span><span class="tp">Docker</span><span class="tp">Java</span></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="side-sec">
+        <div class="sec-label">技能</div>
+        <div class="skill-group">
+          <div class="lbl">前端</div>
+          <div class="pills"><span class="tp">React</span><span class="tp">Vue</span><span class="tp">Next.js</span><span class="tp">TypeScript</span><span class="tp">JavaScript</span><span class="tp">Tailwind</span><span class="tp">MUI</span><span class="tp">Ant Design</span></div>
+        </div>
+        <div class="skill-group">
+          <div class="lbl">後端 / 資料庫</div>
+          <div class="pills"><span class="tp">Node.js</span><span class="tp">Express</span><span class="tp">PostgreSQL</span><span class="tp">RESTful API</span></div>
+        </div>
+        <div class="skill-group">
+          <div class="lbl">工具</div>
+          <div class="pills"><span class="tp">Git</span><span class="tp">Docker</span><span class="tp">Postman</span><span class="tp">Cursor</span><span class="tp">Copilot</span><span class="tp">Claude Code</span></div>
+        </div>
+      </div>
+
+      <div class="side-sec">
+        <div class="sec-label">AI 應用</div>
+        <ul class="ai-list">
+          <li>以 Cursor、Claude Code 進行 Vibe Coding，從規劃到實作走完全流程</li>
+          <li>自建「開發 / 測試 / 審核」三 AI agent 工作流，Playwright 驗收 + Code Review 控管品質</li>
+          <li>熟悉 prompt 設計、tool use 與 AI 輔助除錯</li>
+        </ul>
+      </div>
+
+      <div class="side-sec">
+        <div class="sec-label">學歷</div>
+        <div class="edu">
+          <div class="s">國立中央大學</div>
+          <div class="d">機械工程學系 碩士</div>
+          <div class="y">2016 – 2018</div>
+        </div>
+        <div class="edu">
+          <div class="s">中原大學</div>
+          <div class="d">機械工程學系 學士</div>
+          <div class="y">2012 – 2016</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
