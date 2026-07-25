@@ -59,6 +59,142 @@
     }
     .site-nav { transform: translateY(-110%); transition: transform 0.5s cubic-bezier(0.22,1,0.36,1); }
     .site-nav.nav-visible { transform: translateY(0); }
+    /* ─── Gradient buttons — animated radial gradient + gradient border ───
+       Uses @property so the color/position custom properties are typed and
+       therefore interpolatable; the whole gradient animates on hover. */
+    @property --pos-x   { syntax: '<percentage>'; initial-value: 11.14%;  inherits: false; }
+    @property --pos-y   { syntax: '<percentage>'; initial-value: 140%;    inherits: false; }
+    @property --spread-x{ syntax: '<percentage>'; initial-value: 150%;    inherits: false; }
+    @property --spread-y{ syntax: '<percentage>'; initial-value: 180.06%; inherits: false; }
+    @property --color-1 { syntax: '<color>'; initial-value: #000000; inherits: false; }
+    @property --color-2 { syntax: '<color>'; initial-value: #12002b; inherits: false; }
+    @property --color-3 { syntax: '<color>'; initial-value: #3d0a52; inherits: false; }
+    @property --color-4 { syntax: '<color>'; initial-value: #6b0f66; inherits: false; }
+    @property --color-5 { syntax: '<color>'; initial-value: #a4126f; inherits: false; }
+    @property --border-angle   { syntax: '<angle>'; initial-value: 20deg; inherits: true; }
+    @property --border-color-1 { syntax: '<color>'; initial-value: hsla(316, 100%, 70%, 0.25); inherits: true; }
+    @property --border-color-2 { syntax: '<color>'; initial-value: hsla(316, 100%, 55%, 0.80); inherits: true; }
+    @property --stop-1 { syntax: '<percentage>'; initial-value: 37.35%; inherits: false; }
+    @property --stop-2 { syntax: '<percentage>'; initial-value: 61.36%; inherits: false; }
+    @property --stop-3 { syntax: '<percentage>'; initial-value: 78.42%; inherits: false; }
+    @property --stop-4 { syntax: '<percentage>'; initial-value: 89.52%; inherits: false; }
+    @property --stop-5 { syntax: '<percentage>'; initial-value: 100%;   inherits: false; }
+
+    .grad-btn {
+      position: relative;
+      appearance: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      border-radius: 999px;
+      color: #ffffff;
+      text-decoration: none;
+      white-space: nowrap;
+      background: radial-gradient(
+        var(--spread-x) var(--spread-y) at var(--pos-x) var(--pos-y),
+        var(--color-1) var(--stop-1),
+        var(--color-2) var(--stop-2),
+        var(--color-3) var(--stop-3),
+        var(--color-4) var(--stop-4),
+        var(--color-5) var(--stop-5)
+      );
+      transition:
+        --pos-x 0.5s, --pos-y 0.5s, --spread-x 0.5s, --spread-y 0.5s,
+        --color-1 0.5s, --color-2 0.5s, --color-3 0.5s, --color-4 0.5s, --color-5 0.5s,
+        --border-angle 0.5s, --border-color-1 0.5s, --border-color-2 0.5s,
+        --stop-1 0.5s, --stop-2 0.5s, --stop-3 0.5s, --stop-4 0.5s, --stop-5 0.5s,
+        box-shadow 0.4s ease;
+    }
+    .grad-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(var(--border-angle), var(--border-color-1), var(--border-color-2));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+    .grad-btn:hover {
+      --pos-x: 0%;
+      --pos-y: 91.51%;
+      --spread-x: 120.24%;
+      --spread-y: 103.18%;
+      --color-1: #ff00c8;
+      --color-2: #d10bb4;
+      --color-3: #9000ff;
+      --color-4: #2a0338;
+      --color-5: #000000;
+      --border-angle: 190deg;
+      --border-color-1: hsla(316, 100%, 90%, 0.15);
+      --border-color-2: hsla(316, 100%, 80%, 0.85);
+      --stop-1: 0%;
+      --stop-2: 8.8%;
+      --stop-3: 21.44%;
+      --stop-4: 71.34%;
+      --stop-5: 85.76%;
+      box-shadow: 0 10px 30px rgba(255, 0, 200, 0.45);
+    }
+    /* Secondary tone — cyan/purple instead of magenta */
+    .grad-btn-alt {
+      --color-1: #000010;
+      --color-2: #0a1a3d;
+      --color-3: #14405e;
+      --color-4: #0f6e78;
+      --color-5: #00e5ff;
+      --border-angle: 200deg;
+      --border-color-1: hsla(187, 100%, 80%, 0.55);
+      --border-color-2: hsla(265, 90%, 70%, 0.25);
+    }
+    .grad-btn-alt:hover {
+      --pos-x: 0%;
+      --pos-y: 95.51%;
+      --spread-x: 110.24%;
+      --spread-y: 110.2%;
+      --color-1: #000018;
+      --color-2: #00e5ff;
+      --color-3: #2a8fd6;
+      --color-4: #9000ff;
+      --color-5: #000000;
+      --stop-1: 0%;
+      --stop-2: 10%;
+      --stop-3: 35.44%;
+      --stop-4: 71.34%;
+      --stop-5: 90.76%;
+      --border-angle: 210deg;
+      --border-color-1: hsla(187, 100%, 90%, 0.25);
+      --border-color-2: hsla(265, 90%, 85%, 0.80);
+      box-shadow: 0 10px 30px rgba(0, 229, 255, 0.32);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .grad-btn { transition: none; }
+    }
+
+    /* ─── Resume scroll-reveal (sticky timeline + detail panel) ─── */
+    .rv-runway { height: 280vh; position: relative; }
+    .rv-sticky { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; }
+    .rv-cols {
+      display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+      gap: clamp(32px, 5vw, 88px); width: 100%; align-items: center;
+    }
+    .rv-item { transition: opacity 0.3s ease; }
+    .rv-panel { position: absolute; inset: 0; opacity: 0; transition: opacity 0.35s ease; display: flex; flex-direction: column; justify-content: center; pointer-events: none; }
+    .rv-panel.rv-panel-active { opacity: 1; pointer-events: auto; }
+    .rv-mobile-desc { display: none; }
+    @media (max-width: 900px) {
+      .rv-runway { height: auto; }
+      .rv-sticky { position: static; height: auto; }
+      .rv-cols { grid-template-columns: 1fr; }
+      .rv-detail-col { display: none; }
+      .rv-mobile-desc { display: block; }
+      .rv-item { opacity: 1 !important; }
+    }
+
     /* ─── Spotlight cards — glow follows pointer (CSS vars set from JS) ─── */
     .spot-card { position: relative; }
     .spot-card::before, .spot-card::after {
@@ -368,7 +504,6 @@ function Nav({ activeSection }) {
   const links = [
     { id:"about",      label:"關於 About" },
     { id:"resume",     label:"履歷 Resume" },
-    { id:"experience", label:"工作經歷 Experience" },
     { id:"portfolio",  label:"作品集 Portfolio" },
     { id:"contact",    label:"聯絡 Contact" },
   ];
@@ -447,14 +582,20 @@ function ShaderIntro() {
         float t = time*0.06+random(uv.x)*0.4;
         float lineWidth = 0.0008;
 
-        vec3 color = vec3(0.0);
+        vec3 intensity = vec3(0.0);
         for(int j = 0; j < 3; j++){
           for(int i = 0; i < 5; i++){
-            color[j] += lineWidth*float(i*i) / abs(fract(t - 0.01*float(j)+float(i)*0.01)*1.0 - length(uv));
+            intensity[j] += lineWidth*float(i*i) / abs(fract(t - 0.01*float(j)+float(i)*0.01)*1.0 - length(uv));
           }
         }
 
-        gl_FragColor = vec4(color[2],color[1],color[0],1.0);
+        /* Neon palette — each intensity layer mapped to a brand color */
+        vec3 magenta = vec3(1.0, 0.0, 0.784);   /* #ff00c8 */
+        vec3 purple  = vec3(0.565, 0.0, 1.0);   /* #9000ff */
+        vec3 cyan    = vec3(0.0, 0.898, 1.0);   /* #00e5ff */
+        vec3 color = intensity[0]*magenta + intensity[1]*purple + intensity[2]*cyan;
+
+        gl_FragColor = vec4(color, 1.0);
       }
     `;
 
@@ -594,32 +735,16 @@ function Hero() {
         </p>
 
         <div className="hero-cta" style={{ display:"flex", gap:"14px", flexWrap:"wrap" }}>
-          <a href="#experience" style={{
+          <a href="#resume" className="grad-btn" style={{
             fontFamily:FONT_H, fontSize:"13px", letterSpacing:"0.06em", fontWeight:600,
             padding:"15px 38px",
-            background:`linear-gradient(135deg, ${THEME.deepPurple} 0%, ${THEME.lavender} 100%)`,
-            color:"#000000",
-            textDecoration:"none", display:"inline-block",
-            borderRadius:"999px",
-            boxShadow:"0 8px 24px rgba(255,0,200,0.35)",
-            transition:"transform 0.25s ease, box-shadow 0.25s ease",
-          }}
-          onMouseEnter={e=>{ e.currentTarget.style.transform="translateY(-2px)"; e.currentTarget.style.boxShadow="0 12px 32px rgba(255,0,200,0.5)"; }}
-          onMouseLeave={e=>{ e.currentTarget.style.transform="none"; e.currentTarget.style.boxShadow="0 8px 24px rgba(255,0,200,0.35)"; }}>
+          }}>
             工作經歷 Experience
           </a>
-          <a href="#about" style={{
+          <a href="#about" className="grad-btn grad-btn-alt" style={{
             fontFamily:FONT_H, fontSize:"13px", letterSpacing:"0.06em", fontWeight:500,
             padding:"15px 38px",
-            border:`1.5px solid ${THEME.lavender}`,
-            color:THEME.deepPurple,
-            background:"rgba(255,255,255,0.06)",
-            textDecoration:"none", display:"inline-block",
-            borderRadius:"999px",
-            transition:"all 0.25s ease",
-          }}
-          onMouseEnter={e=>{ e.currentTarget.style.background="rgba(255,0,200,0.15)"; e.currentTarget.style.borderColor=THEME.coral; e.currentTarget.style.color=THEME.coral; }}
-          onMouseLeave={e=>{ e.currentTarget.style.background="rgba(255,255,255,0.06)"; e.currentTarget.style.borderColor=THEME.lavender; e.currentTarget.style.color=THEME.deepPurple; }}>
+          }}>
             關於我 About
           </a>
         </div>
@@ -698,59 +823,153 @@ function About() {
 function Resume() {
   const jobs = [
     {
+      num:"01",
       year:"2023/02 — 現在",
       company:"BitstreetX（加密貨幣交易所）",
       role:"Front-end Engineer",
       desc:"以 Vue / React 開發加密貨幣交易所網站與 TradingView 交易介面，優化網站效能與程式碼品質，導入 JWE（JSON Web Encryption）實現端對端加密，並建置測試自動化流程。",
       stack:"Vue · Next.js · Tailwind · Cypress",
+      accent:"#ff00c8",
     },
     {
+      num:"02",
       year:"2022/03 — 2022/11",
       company:"NAOS Finance（DeFi）",
       role:"Front-end Engineer",
       desc:"以 React 開發官方網站與 DeFi DApp，透過 ethers.js 串接智能合約 ABI，開發 UI 元件套件，並整合多個 DeFi 協議 API。",
       stack:"TypeScript · React · styled-components · ethers.js",
+      accent:"#9000ff",
     },
     {
+      num:"03",
       year:"2018/12 — 2022/01",
       company:"The Dojo Software Solutions（Web Game）",
       role:"Front-end Engineer",
       desc:"以 React 開發網頁遊戲平台與老虎機遊戲功能，建置後台管理系統，串接 Google Analytics 埋點，並支援後端整合工作。",
       stack:"JavaScript · TypeScript · React · Node.js · Docker · Java",
+      accent:"#00e5ff",
     },
   ];
 
+  const runwayRef = useRef(null);
+
+  /* Scroll-scrubbed timeline: progress bars fill per job, right panel crossfades.
+     Direct DOM writes (no setState) to stay smooth at scroll speed. */
+  useEffect(() => {
+    if (!window.gsap || !window.ScrollTrigger) return;
+    const root = runwayRef.current;
+    if (!root) return;
+    const items  = root.querySelectorAll(".rv-item");
+    const fills  = root.querySelectorAll(".rv-fill");
+    const panels = root.querySelectorAll(".rv-panel");
+    const n = items.length;
+
+    const apply = (p) => {
+      const activeIdx = Math.min(n - 1, Math.floor(p * n));
+      for (let i = 0; i < n; i++) {
+        const s = i / n, e = (i + 1) / n;
+        const f = p <= s ? 0 : p >= e ? 100 : ((p - s) / (e - s)) * 100;
+        fills[i].style.height = f + "%";
+        items[i].style.opacity = i === activeIdx ? 1 : 0.42;
+        panels[i].classList.toggle("rv-panel-active", i === activeIdx);
+      }
+    };
+    apply(0);
+
+    const st = ScrollTrigger.create({
+      trigger: root,
+      start: "top top",
+      end: "bottom bottom",
+      scrub: true,
+      onUpdate: (self) => apply(self.progress),
+    });
+    return () => st.kill();
+  }, []);
+
   return (
     <section id="resume" style={{
-      background:THEME.tintResume, padding:"120px clamp(24px,8vw,120px)",
-      position:"relative", overflow:"hidden",
+      background:THEME.tintResume, padding:"120px clamp(24px,8vw,120px) 120px",
+      position:"relative",
     }}>
 
-      <div style={{ maxWidth:"820px", margin:"0 auto", position:"relative", zIndex:1 }}>
+      <div style={{ maxWidth:"1100px", margin:"0 auto", position:"relative", zIndex:1 }}>
         <SectionTitle en="Resume" ja="経歴" zh="工作履歷" />
-        <div style={{ marginTop:"60px" }}>
-          <h3 style={{ fontFamily:FONT_MONO, fontSize:"11px", letterSpacing:"0.22em", color:THEME.coral, marginBottom:"36px" }}>— WORK EXPERIENCE</h3>
-          {jobs.map((j,i) => (
-            <div key={i} className="rv-card spot-card" style={{
-              background:"rgba(255,255,255,0.05)",
-              borderRadius:"20px",
-              border:`1px solid ${THEME.divider}`,
-              padding:"28px 32px", marginBottom:"20px",
-              display:"grid", gridTemplateColumns:"160px 1fr", gap:"32px",
-            }}>
-              <div style={{ paddingTop:"4px" }}>
-                <div style={{ fontFamily:FONT_MONO, fontSize:"11px", color:THEME.coral, letterSpacing:"0.06em", marginBottom:"10px" }}>{j.year}</div>
-                <div style={{ fontFamily:FONT_MONO, fontSize:"10px", color:THEME.textMuted, letterSpacing:"0.04em", lineHeight:1.7 }}>{j.stack}</div>
-              </div>
-              <div>
-                <div style={{ fontFamily:FONT_H, fontSize:"19px", fontWeight:600, color:THEME.text, marginBottom:"3px" }}>{j.role}</div>
-                <div style={{ fontFamily:FONT_H, fontSize:"14px", fontWeight:500, color:THEME.deepPurple, marginBottom:"14px" }}>{j.company}</div>
-                <div style={{ fontFamily:FONT_BODY, fontSize:"14px", fontWeight:400, lineHeight:1.85, color:THEME.textSoft, letterSpacing:"0.03em" }}>{j.desc}</div>
-              </div>
-            </div>
-          ))}
 
-          <h3 style={{ fontFamily:FONT_MONO, fontSize:"11px", letterSpacing:"0.22em", color:THEME.coral, margin:"48px 0 28px" }}>— EDUCATION</h3>
+        {/* ── Scroll-reveal work experience ── */}
+        <div className="rv-runway" ref={runwayRef}>
+          <div className="rv-sticky">
+            <div className="rv-cols">
+
+              {/* Left — all jobs, compact timeline */}
+              <div>
+                <h3 style={{ fontFamily:FONT_MONO, fontSize:"11px", letterSpacing:"0.22em", color:THEME.coral, marginBottom:"32px" }}>— WORK EXPERIENCE</h3>
+                {jobs.map((j, i) => (
+                  <div key={i} className="rv-item" style={{ display:"flex", gap:"18px", marginBottom:"30px" }}>
+                    {/* progress track */}
+                    <div style={{ position:"relative", width:"2px", alignSelf:"stretch", background:"rgba(255,255,255,0.12)", borderRadius:"2px", marginTop:"4px" }}>
+                      <div className="rv-fill" style={{
+                        position:"absolute", top:0, left:0, width:"100%", height:"0%",
+                        background:j.accent, borderRadius:"2px",
+                        boxShadow:`0 0 10px ${j.accent}aa`,
+                      }}/>
+                    </div>
+                    <div style={{ paddingBottom:"4px" }}>
+                      <div style={{ fontFamily:FONT_MONO, fontSize:"11px", color:j.accent, letterSpacing:"0.08em", marginBottom:"6px" }}>
+                        {j.num} · {j.year}
+                      </div>
+                      <div style={{ fontFamily:FONT_H, fontSize:"clamp(17px,1.8vw,21px)", fontWeight:600, color:THEME.text, marginBottom:"2px" }}>{j.role}</div>
+                      <div style={{ fontFamily:FONT_H, fontSize:"13px", fontWeight:500, color:THEME.textMuted }}>{j.company}</div>
+                      {/* Mobile fallback — details inline */}
+                      <div className="rv-mobile-desc" style={{ marginTop:"10px" }}>
+                        <div style={{ fontFamily:FONT_BODY, fontSize:"13px", lineHeight:1.8, color:THEME.textSoft, marginBottom:"8px" }}>{j.desc}</div>
+                        <div style={{ fontFamily:FONT_MONO, fontSize:"10px", color:THEME.textMuted, letterSpacing:"0.04em" }}>{j.stack}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Right — crossfading detail panel */}
+              <div className="rv-detail-col" style={{ position:"relative", height:"min(520px, 72vh)" }}>
+                {jobs.map((j, i) => (
+                  <div key={i} className="rv-panel">
+                    <div className="spot-card" style={{
+                      background:`radial-gradient(130% 130% at 85% 0%, ${j.accent}14 0%, transparent 55%), rgba(255,255,255,0.04)`,
+                      border:`1px solid ${THEME.divider}`,
+                      borderRadius:"26px",
+                      padding:"clamp(28px, 3.5vw, 48px)",
+                      height:"100%",
+                      display:"flex", flexDirection:"column", justifyContent:"center",
+                    }}>
+                      <div style={{
+                        fontFamily:FONT_H, fontSize:"44px", fontWeight:800, lineHeight:1,
+                        color:"transparent", WebkitTextStroke:`1.2px ${j.accent}`,
+                        textShadow:`0 0 16px ${j.accent}44`, marginBottom:"20px",
+                      }}>{j.num}</div>
+                      <div style={{ fontFamily:FONT_MONO, fontSize:"12px", color:j.accent, letterSpacing:"0.1em", marginBottom:"14px" }}>{j.year}</div>
+                      <div style={{ fontFamily:FONT_H, fontSize:"22px", fontWeight:600, color:THEME.text, marginBottom:"4px" }}>{j.role}</div>
+                      <div style={{ fontFamily:FONT_H, fontSize:"14px", fontWeight:500, color:THEME.textSoft, marginBottom:"22px" }}>{j.company}</div>
+                      <div style={{ fontFamily:FONT_BODY, fontSize:"14.5px", lineHeight:1.95, color:THEME.textSoft, letterSpacing:"0.03em", marginBottom:"26px" }}>{j.desc}</div>
+                      <div style={{ display:"flex", flexWrap:"wrap", gap:"8px" }}>
+                        {j.stack.split(" · ").map(t => (
+                          <span key={t} style={{
+                            fontFamily:FONT_H, fontSize:"11px", fontWeight:500, letterSpacing:"0.05em",
+                            padding:"5px 13px", borderRadius:"999px",
+                            background:`${j.accent}14`, color:j.accent, border:`1px solid ${j.accent}38`,
+                          }}>{t}</span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <div style={{ marginTop:"40px", maxWidth:"820px" }}>
+          <h3 style={{ fontFamily:FONT_MONO, fontSize:"11px", letterSpacing:"0.22em", color:THEME.coral, margin:"0 0 28px" }}>— EDUCATION</h3>
           <div className="rv-card spot-card" style={{
             background:"rgba(255,255,255,0.04)", borderRadius:"20px",
             border:`1px solid ${THEME.divider}`, padding:"24px 32px",
@@ -799,66 +1018,6 @@ function Resume() {
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─── EXPERIENCE (visual work highlights) ────────────── */
-function Experience() {
-  const projects = [
-    {
-      num:"01",
-      title:"加密貨幣交易所",
-      en:"Crypto Exchange Platform · BitstreetX",
-      desc:"開發完整的加密貨幣交易所前端，包含即時行情、TradingView K 線圖、訂單簿與交易介面，並導入 JWE 端對端加密保護用戶資料。",
-      tags:["Vue","Next.js","Tailwind","Cypress"],
-      gradient:`linear-gradient(135deg, ${THEME.coral} 0%, ${THEME.pink} 100%)`,
-      accent:THEME.coral,
-    },
-    {
-      num:"02",
-      title:"DeFi 去中心化應用",
-      en:"DeFi DApp · NAOS Finance",
-      desc:"以 React + ethers.js 打造 DeFi 借貸平台前端，直接串接智能合約 ABI，實現錢包連線、資產存取與流動性挖礦功能。",
-      tags:["React","TypeScript","ethers.js","styled-components"],
-      gradient:`linear-gradient(135deg, ${THEME.lavender} 0%, ${THEME.sky} 100%)`,
-      accent:THEME.lavender,
-    },
-    {
-      num:"03",
-      title:"網頁遊戲平台",
-      en:"Web Game Platform · The Dojo",
-      desc:"開發老虎機遊戲功能與整套後台管理系統，以 React 架構支援多款遊戲，整合 Google Analytics 行為埋點追蹤。",
-      tags:["React","JavaScript","Node.js","Docker"],
-      gradient:`linear-gradient(135deg, ${THEME.cream} 0%, ${THEME.coral} 100%)`,
-      accent:THEME.deepPurple,
-    },
-    {
-      num:"04",
-      title:"AI 應用",
-      en:"AI Application · Canopy School",
-      desc:"串接 LLM 服務，為學生與老師打造客製化的 AI 教學平台，提供自動產題、白板教學、語音互動等個人化學習體驗。",
-      tags:["Next.js","LLM","TTS / STT"],
-      gradient:`linear-gradient(135deg, ${THEME.pink} 0%, ${THEME.lavender} 100%)`,
-      accent:THEME.lavender,
-    },
-  ];
-  return (
-    <section id="experience" style={{
-      background:THEME.tintWork, padding:"120px clamp(24px,8vw,120px)",
-      position:"relative", overflow:"hidden",
-    }}>
-
-      <div style={{ maxWidth:"1080px", margin:"0 auto", position:"relative", zIndex:1 }}>
-        <SectionTitle en="Experience" ja="経歴" zh="工作經歷" />
-        <div style={{
-          display:"grid",
-          gridTemplateColumns:"repeat(auto-fill,minmax(420px,1fr))",
-          gap:"24px", marginTop:"60px",
-        }}>
-          {projects.map((p,i) => <ProjectCard key={i} p={p} />)}
         </div>
       </div>
     </section>
@@ -1334,17 +1493,17 @@ function ProjectModal({ project, onClose }) {
           {(p.git || p.demo || p.doc) && (
             <div style={{ display:"flex", flexWrap:"wrap", gap:"12px", paddingTop:"24px", borderTop:`1px solid ${THEME.divider}` }}>
               {p.demo && (
-                <a href={p.demo} target="_blank" rel="noopener noreferrer" style={linkBtnStyle(THEME, true)}>
+                <a href={p.demo} target="_blank" rel="noopener noreferrer" className={linkBtnClass(true)} style={linkBtnStyle(THEME, true)}>
                   Live demo →
                 </a>
               )}
               {p.git && (
-                <a href={p.git} target="_blank" rel="noopener noreferrer" style={linkBtnStyle(THEME, false)}>
+                <a href={p.git} target="_blank" rel="noopener noreferrer" className={linkBtnClass(false)} style={linkBtnStyle(THEME, false)}>
                   GitHub →
                 </a>
               )}
               {p.doc && (
-                <a href={p.doc} target="_blank" rel="noopener noreferrer" style={linkBtnStyle(THEME, false)}>
+                <a href={p.doc} target="_blank" rel="noopener noreferrer" className={linkBtnClass(false)} style={linkBtnStyle(THEME, false)}>
                   Document →
                 </a>
               )}
@@ -1357,66 +1516,16 @@ function ProjectModal({ project, onClose }) {
 }
 
 function linkBtnStyle(THEME, primary) {
-  return primary ? {
-    fontFamily:FONT_H, fontSize:"13px", fontWeight:600, letterSpacing:"0.05em",
-    padding:"12px 28px", borderRadius:"999px",
-    background:`linear-gradient(135deg, ${THEME.deepPurple} 0%, ${THEME.lavender} 100%)`,
-    color:"#000000",
-    textDecoration:"none",
-    boxShadow:"0 8px 20px rgba(255,0,200,0.35)",
-  } : {
-    fontFamily:FONT_H, fontSize:"13px", fontWeight:500, letterSpacing:"0.05em",
-    padding:"12px 28px", borderRadius:"999px",
-    background:"rgba(255,255,255,0.05)",
-    color:THEME.deepPurple,
-    border:`1.5px solid ${THEME.lavender}`,
-    textDecoration:"none",
+  return {
+    fontFamily:FONT_H, fontSize:"13px", letterSpacing:"0.05em",
+    fontWeight: primary ? 600 : 500,
+    padding:"12px 28px",
   };
 }
 
-function ProjectCard({ p }) {
-  const [hov, setHov] = useState(false);
-  return (
-    <div
-      className="exp-card spot-card"
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-      style={{
-        background: "rgba(255,255,255,0.05)",
-        border:`1px solid ${hov ? p.accent + "80" : THEME.divider}`,
-        borderRadius:"24px",
-        padding:"32px", position:"relative", overflow:"hidden", cursor:"pointer",
-        transition:"border-color 0.3s, transform 0.3s, box-shadow 0.3s",
-        transform: hov ? "translateY(-4px)" : "none",
-        boxShadow: hov
-          ? `0 16px 40px ${p.accent}30`
-          : "0 4px 16px rgba(255,0,200,0.06)",
-      }}
-    >
-      {/* hollow neon number */}
-      <div style={{
-        fontFamily:FONT_H, fontSize:"52px", fontWeight:800, lineHeight:1,
-        color:"transparent",
-        WebkitTextStroke:`1.5px ${p.accent}`,
-        textShadow:`0 0 18px ${p.accent}55`,
-        letterSpacing:"0.04em",
-        marginBottom:"22px",
-      }}>{p.num}</div>
-
-      <div style={{ fontFamily:FONT_H, fontSize:"20px", fontWeight:600, color:THEME.text, marginBottom:"3px" }}>{p.title}</div>
-      <div style={{ fontFamily:FONT_H, fontSize:"13px", fontWeight:500, color:p.accent, marginBottom:"14px", letterSpacing:"0.03em" }}>{p.en}</div>
-      <div style={{ fontFamily:FONT_BODY, fontSize:"14px", fontWeight:400, lineHeight:1.85, color:THEME.textSoft, marginBottom:"24px", letterSpacing:"0.03em" }}>{p.desc}</div>
-      <div style={{ display:"flex", flexWrap:"wrap", gap:"8px" }}>
-        {p.tags.map(t => (
-          <span key={t} style={{
-            fontFamily:FONT_H, fontSize:"11px", fontWeight:500, letterSpacing:"0.05em",
-            padding:"5px 12px", borderRadius:"999px",
-            background:`${p.accent}18`, color:p.accent, border:`1px solid ${p.accent}30`,
-          }}>{t}</span>
-        ))}
-      </div>
-    </div>
-  );
+/* Class for the modal's link buttons — primary is magenta, rest cyan/purple. */
+function linkBtnClass(primary) {
+  return primary ? "grad-btn" : "grad-btn grad-btn-alt";
 }
 
 /* ─── CONTACT ────────────────────────────────────────── */
@@ -1444,18 +1553,10 @@ function Contact() {
             </div>
             <div style={{ fontFamily:FONT_BODY, fontSize:"13px", fontWeight:400, color:THEME.textSoft, letterSpacing:"0.06em" }}>歡迎聯絡合作 · Taipei, Taiwan</div>
           </div>
-          <a href="mailto:jean619215@gmail.com" style={{
+          <a href="mailto:jean619215@gmail.com" className="grad-btn" style={{
             fontFamily:FONT_H, fontSize:"13px", fontWeight:600, letterSpacing:"0.06em",
             padding:"14px 32px",
-            background:`linear-gradient(135deg, ${THEME.deepPurple} 0%, ${THEME.lavender} 100%)`,
-            color:"#000000",
-            borderRadius:"999px",
-            textDecoration:"none",
-            boxShadow:"0 8px 20px rgba(255,0,200,0.35)",
-            transition:"transform 0.25s, box-shadow 0.25s", whiteSpace:"nowrap",
-          }}
-          onMouseEnter={e=>{ e.currentTarget.style.transform="translateY(-2px)"; e.currentTarget.style.boxShadow="0 12px 28px rgba(255,0,200,0.5)"; }}
-          onMouseLeave={e=>{ e.currentTarget.style.transform="none"; e.currentTarget.style.boxShadow="0 8px 20px rgba(255,0,200,0.35)"; }}>
+          }}>
             聯絡我
           </a>
         </div>
@@ -1508,7 +1609,7 @@ function App() {
   const [openProject, setOpenProject] = useState(null);
 
   useEffect(() => {
-    const ids = ["about","resume","experience","portfolio","contact"];
+    const ids = ["about","resume","portfolio","contact"];
     const obs = new IntersectionObserver(entries => {
       entries.forEach(e => { if (e.isIntersecting) setActiveSection(e.target.id); });
     }, { threshold:0.35 });
@@ -1617,7 +1718,7 @@ function App() {
       });
 
       /* Cards — batched stagger reveal */
-      [".rv-card", ".exp-card", ".pf-card"].forEach((sel) => {
+      [".rv-card", ".pf-card"].forEach((sel) => {
         const items = gsap.utils.toArray(sel);
         if (!items.length) return;
         gsap.set(items, { y: 44, autoAlpha: 0 });
@@ -1653,7 +1754,6 @@ function App() {
       <Hero />
       <About />
       <Resume />
-      <Experience />
       <Portfolio onOpen={setOpenProject} />
       <Contact />
       <ProjectModal project={openProject} onClose={() => setOpenProject(null)} />
