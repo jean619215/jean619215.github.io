@@ -696,6 +696,170 @@ function ShaderIntro() {
   );
 }
 
+/* ─── PARTICLE TEXT (canvas particle text, mouse-repel) ──
+   lines: [{ text, weight, colors: [c] | [c1, c2] }] — multi-color = gradient.
+   sizer(containerWidth) → font size. Used for the hero name and section titles. */
+function ParticleText({ lines, sizer, heading = "h2", label, style }) {
+  const wrapRef = useRef(null);
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const wrap = wrapRef.current, canvas = canvasRef.current;
+    if (!wrap || !canvas) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const ctx = canvas.getContext("2d");
+    let particles = [];
+    let raf = null;
+    let running = false;
+    const mouse = { x: -9999, y: -9999 };
+
+    const build = () => {
+      const basis = (wrap.parentElement && wrap.parentElement.clientWidth) || wrap.clientWidth;
+      const fs = sizer(basis);
+      const lineH = fs * 1.12;
+      const h = Math.round(lineH * (lines.length - 1) + fs * 1.35);
+      let maxW = 0;
+      lines.forEach(L => {
+        ctx.font = `${L.weight} ${fs}px Outfit, sans-serif`;
+        maxW = Math.max(maxW, ctx.measureText(L.text).width);
+      });
+      const w = Math.max(10, Math.min(basis, Math.ceil(maxW + fs * 0.12)));
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      canvas.style.width = w + "px";
+      canvas.style.height = h + "px";
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      /* draw source text, sample pixels, spawn particles */
+      ctx.clearRect(0, 0, w, h);
+      ctx.textBaseline = "alphabetic";
+      lines.forEach((L, li) => {
+        if (L.colors.length > 1) {
+          const grad = ctx.createLinearGradient(0, li * lineH, w, (li + 1) * lineH);
+          L.colors.forEach((c, ci) => grad.addColorStop(ci / (L.colors.length - 1), c));
+          ctx.fillStyle = grad;
+        } else {
+          ctx.fillStyle = L.colors[0];
+        }
+        ctx.font = `${L.weight} ${fs}px Outfit, sans-serif`;
+        ctx.fillText(L.text, 0, fs * 0.92 + li * lineH);
+      });
+
+      const data = ctx.getImageData(0, 0, w * dpr, h * dpr).data;
+      ctx.clearRect(0, 0, w, h);
+      particles = [];
+      const gap = Math.max(3, Math.round(fs / 26));
+      for (let y = 0; y < h; y += gap) {
+        for (let x = 0; x < w; x += gap) {
+          const i = ((y * dpr | 0) * (w * dpr) + (x * dpr | 0)) * 4;
+          if (data[i + 3] > 128) {
+            particles.push({
+              x: reduce ? x : Math.random() * w,
+              y: reduce ? y : Math.random() * h,
+              bx: x, by: y,
+              vx: 0, vy: 0,
+              r: gap * 0.42,
+              color: `rgb(${data[i]},${data[i + 1]},${data[i + 2]})`,
+            });
+          }
+        }
+      }
+    };
+
+    const tick = () => {
+      raf = requestAnimationFrame(tick);
+      const w = canvas.clientWidth, h = canvas.clientHeight;
+      ctx.clearRect(0, 0, w, h);
+      for (const p of particles) {
+        const dx = p.x - mouse.x, dy = p.y - mouse.y;
+        const dist2 = dx * dx + dy * dy;
+        const R = 92;
+        if (dist2 < R * R) {
+          const dist = Math.sqrt(dist2) || 1;
+          const force = (R - dist) / R;
+          p.vx += (dx / dist) * force * 6;
+          p.vy += (dy / dist) * force * 6;
+        }
+        p.vx += (p.bx - p.x) * 0.06;
+        p.vy += (p.by - p.y) * 0.06;
+        p.vx *= 0.82;
+        p.vy *= 0.82;
+        p.x += p.vx;
+        p.y += p.vy;
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, p.r * 2, p.r * 2);
+      }
+    };
+
+    const drawStatic = () => {
+      const w = canvas.clientWidth, h = canvas.clientHeight;
+      ctx.clearRect(0, 0, w, h);
+      for (const p of particles) {
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.bx, p.by, p.r * 2, p.r * 2);
+      }
+    };
+
+    const start = () => {
+      if (running) return;
+      running = true;
+      if (reduce) { drawStatic(); } else { tick(); }
+    };
+    const stop = () => {
+      running = false;
+      if (raf) { cancelAnimationFrame(raf); raf = null; }
+    };
+
+    const onMove = (e) => {
+      const r = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - r.left;
+      mouse.y = e.clientY - r.top;
+    };
+    const onLeave = () => { mouse.x = -9999; mouse.y = -9999; };
+
+    /* build once fonts are ready so sampling uses Outfit, not the fallback */
+    const init = () => { build(); if (visible) start(); };
+    let visible = false;
+    const io = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      if (visible && particles.length) start();
+      if (!visible) stop();
+    }, { threshold: 0.15 });
+    io.observe(wrap);
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(init);
+    } else {
+      init();
+    }
+
+    const onResize = () => { build(); if (reduce) drawStatic(); };
+    window.addEventListener("resize", onResize);
+    window.addEventListener("pointermove", onMove, { passive: true });
+    window.addEventListener("pointerleave", onLeave);
+
+    return () => {
+      stop();
+      io.disconnect();
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerleave", onLeave);
+    };
+  }, []);
+
+  const Heading = heading;
+  return (
+    <div ref={wrapRef} className="pt-wrap" style={style}>
+      <Heading style={{
+        position:"absolute", width:"1px", height:"1px", overflow:"hidden",
+        clip:"rect(0 0 0 0)", whiteSpace:"nowrap", margin:0,
+      }}>{label}</Heading>
+      <canvas ref={canvasRef} aria-hidden="true" style={{ display:"block" }} />
+    </div>
+  );
+}
+
 function Hero() {
   return (
     <section id="hero" style={{
@@ -708,23 +872,16 @@ function Hero() {
       <div className="hero-inner" style={{
         maxWidth:"820px", position:"relative", zIndex:2, width:"100%",
       }}>
-        <h1 style={{
-          fontFamily:FONT_H, fontSize:"clamp(60px,9vw,124px)", fontWeight:700,
-          lineHeight:1.05, color:THEME.text, letterSpacing:"-0.045em",
-          marginBottom:"4px",
-          paddingBottom:"0.04em",
-        }}>
-          {"Jean".split("").map((c,i)=>(<span key={i} className="hero-ch">{c}</span>))}
-        </h1>
-        <h1 style={{
-          fontFamily:FONT_H, fontSize:"clamp(60px,9vw,124px)", fontWeight:300,
-          lineHeight:1.2, letterSpacing:"-0.045em",
-          marginBottom:"36px",
-          paddingBottom:"0.22em",
-          overflow:"visible",
-        }}>
-          {"Chung".split("").map((c,i)=>(<span key={i} className="hero-ch grad-ch">{c}</span>))}
-        </h1>
+        <ParticleText
+          heading="h1"
+          label="Jean Chung"
+          lines={[
+            { text:"Jean",  weight:700, colors:["#ffffff"] },
+            { text:"Chung", weight:300, colors:["#ff00c8", "#9000ff"] },
+          ]}
+          sizer={w => Math.max(56, Math.min(124, w / 4.4))}
+          style={{ width:"100%", marginBottom:"36px" }}
+        />
 
         <p className="hero-sub" style={{
           fontFamily:FONT_BODY, fontSize:"clamp(15px,1.7vw,18px)", fontWeight:400,
@@ -1650,14 +1807,13 @@ function Contact() {
 function SectionTitle({ en, ja, zh }) {
   return (
     <div className="sec-title">
-      <div style={{ display:"flex", alignItems:"baseline", gap:"16px", marginBottom:"8px" }}>
-        <h2 style={{
-          fontFamily:FONT_H, fontSize:"clamp(40px,5.5vw,68px)", fontWeight:700,
-          letterSpacing:"-0.04em", lineHeight:1,
-          background:`linear-gradient(135deg, ${THEME.text} 0%, ${THEME.deepPurple} 60%, ${THEME.coral} 100%)`,
-          WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent",
-          backgroundClip:"text",
-        }}>{en}</h2>
+      <div className="sec-head" style={{ display:"flex", alignItems:"baseline", gap:"16px", marginBottom:"8px" }}>
+        <ParticleText
+          heading="h2"
+          label={en}
+          lines={[{ text:en, weight:700, colors:["#ffffff", "#ff00c8"] }]}
+          sizer={w => Math.max(52, Math.min(100, w * 0.085))}
+        />
         <span style={{ fontFamily:FONT_MONO, fontSize:"10px", color:THEME.coral, letterSpacing:"0.22em" }}>{ja}</span>
       </div>
       <div style={{ display:"flex", alignItems:"center", gap:"14px" }}>
@@ -1739,14 +1895,10 @@ function App() {
       /* Hero intro timeline — staggered char rise (fires when hero scrolls into view) */
       const intro = gsap.timeline({
         defaults: { ease: "power3.out" },
-        scrollTrigger: { trigger: ".hero-ch", start: "top 80%", once: true },
+        scrollTrigger: { trigger: ".hero-sub", start: "top 85%", once: true },
       });
       intro
-        .from(".hero-ch", {
-          yPercent: 110, autoAlpha: 0, rotation: 6,
-          duration: 0.9, ease: "back.out(1.6)", stagger: 0.045,
-        })
-        .from(".hero-sub", { y: 24, autoAlpha: 0, duration: 0.7 }, "-=0.45")
+        .from(".hero-sub", { y: 24, autoAlpha: 0, duration: 0.7 })
         .from(".hero-cta > a", {
           y: 18, autoAlpha: 0, scale: 0.92,
           duration: 0.5, ease: "back.out(2)", stagger: 0.12,
@@ -1775,7 +1927,7 @@ function App() {
         const tl = gsap.timeline({
           scrollTrigger: { trigger: el, start: "top 85%", once: true },
         });
-        tl.from(el.querySelector("h2"), {
+        tl.from(el.querySelector(".sec-head"), {
           y: 42, autoAlpha: 0, duration: 0.8, ease: "power3.out",
         });
         if (line) tl.from(line, { scaleX: 0, duration: 0.9, ease: "power2.inOut" }, "-=0.5");
