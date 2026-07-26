@@ -175,6 +175,27 @@
       .grad-btn { transition: none; }
     }
 
+    /* ─── Portfolio skewed card stack (reference: stacked testimonial cards) ─── */
+    .pf-stack {
+      display: grid;
+      grid-template-areas: "stack";
+      justify-content: start;
+      align-items: start;
+    }
+    .pf3d {
+      grid-area: stack;
+      width: min(420px, 82vw);
+      transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease;
+      will-change: transform;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .pf3d { transition: none; }
+    }
+    @media (max-width: 700px) {
+      .pf-stack { display: flex; flex-direction: column; gap: 24px; align-items: center; padding-left: 0 !important; }
+      .pf3d { transform: none !important; filter: none !important; }
+    }
+
     /* ─── Resume scroll-reveal (sticky timeline + detail panel) ─── */
     .rv-runway { height: 280vh; position: relative; }
     .rv-sticky { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; }
@@ -395,23 +416,6 @@ function MvCloud({ style, color = "#FFFFFF", opacity = 0.65 }) {
   );
 }
 
-/* ─── SIMPLE AVATAR ICON (About card) ────────────────── */
-function AvatarIcon({ style, opacity = 1 }) {
-  return (
-    <svg style={{ position:"absolute", pointerEvents:"none", opacity, ...style }} viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg">
-      {/* Soft pastel halo behind figure */}
-      <circle cx="100" cy="115" r="78" fill="#FFFFFF" opacity="0.18"/>
-      {/* Head */}
-      <circle cx="100" cy="92" r="34" fill="#FFFFFF" opacity="0.95"/>
-      {/* Shoulders / body */}
-      <path d="M 38,220 Q 38,160 100,150 Q 162,160 162,220 Z" fill="#FFFFFF" opacity="0.95"/>
-      {/* Inner subtle shading on head + body */}
-      <circle cx="112" cy="92" r="34" fill="#ff00c8" opacity="0.12"/>
-      <path d="M 38,220 Q 38,160 100,150 Q 162,160 162,220 Z" fill="#ff00c8" opacity="0.08"/>
-    </svg>
-  );
-}
-
 /* ─── PENROSE TRIANGLE (Hero impossible figure) ──────── */
 function PenroseTriangle({ style, opacity = 1 }) {
   // Three colored bars folded into an impossible triangle.
@@ -502,7 +506,6 @@ function Nav({ activeSection }) {
   }, []);
 
   const links = [
-    { id:"about",      label:"關於 About" },
     { id:"resume",     label:"履歷 Resume" },
     { id:"portfolio",  label:"作品集 Portfolio" },
     { id:"contact",    label:"聯絡 Contact" },
@@ -741,78 +744,12 @@ function Hero() {
           }}>
             工作經歷 Experience
           </a>
-          <a href="#about" className="grad-btn grad-btn-alt" style={{
+          <a href="#portfolio" className="grad-btn grad-btn-alt" style={{
             fontFamily:FONT_H, fontSize:"13px", letterSpacing:"0.06em", fontWeight:500,
             padding:"15px 38px",
           }}>
-            關於我 About
+            作品集 Portfolio
           </a>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─── ABOUT ──────────────────────────────────────────── */
-function About() {
-  const skills = ["React","TypeScript","Vue","Next.js","Tailwind","ethers.js","Node.js","Docker"];
-
-  return (
-    <section id="about" style={{
-      background:THEME.tintAbout, padding:"130px clamp(24px,8vw,120px)",
-      position:"relative", overflow:"hidden",
-    }}>
-
-      <div style={{ maxWidth:"960px", margin:"0 auto", position:"relative", zIndex:1 }}>
-        <SectionTitle en="About" ja="自己紹介" zh="關於我" />
-
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"clamp(40px,6vw,100px)", alignItems:"start", marginTop:"64px" }}>
-
-          <div>
-            <div style={{
-              width:"100%", aspectRatio:"4/5",
-              background:`linear-gradient(160deg, ${THEME.lavender} 0%, ${THEME.pink} 50%, ${THEME.coral} 100%)`,
-              overflow:"hidden", position:"relative",
-              borderRadius:"24px",
-              boxShadow:"0 20px 60px rgba(255,0,200,0.2)",
-              display:"flex", alignItems:"center", justifyContent:"center",
-            }}>
-              <AvatarIcon style={{ inset:"10%", width:"80%", height:"80%" }} opacity={1}/>
-              <span style={{
-                position:"absolute", bottom:"18px", left:"50%", transform:"translateX(-50%)",
-                fontFamily:FONT_MONO, fontSize:"10px", color:"#FFFFFF",
-                letterSpacing:"0.16em", whiteSpace:"nowrap",
-                background:"rgba(255,0,200,0.3)", padding:"4px 12px", borderRadius:"999px",
-              }}>Jean Chung</span>
-            </div>
-          </div>
-
-          <div style={{ paddingTop:"8px" }}>
-            <p style={{
-              fontFamily:FONT_BODY, fontSize:"clamp(15px,1.6vw,17px)", fontWeight:400,
-              lineHeight:2.0, color:THEME.text, letterSpacing:"0.04em", marginBottom:"20px",
-            }}>
-              你好，我是 Jean。擁有 6 年以上前端開發經驗，曾參與加密貨幣交易所、DeFi 去中心化應用、AI 個人化學習平台與線上遊戲平台的開發。熟悉 React 生態系與 ethers.js 智能合約串接，並有 RESTful API 與第三方 LLM 平台服務整合的實戰經驗。
-            </p>
-            <p style={{
-              fontFamily:FONT_H, fontSize:"clamp(14px,1.5vw,16px)", fontWeight:400,
-              lineHeight:1.75, color:THEME.textSoft, marginBottom:"40px",
-            }}>
-              Hi — I'm a frontend engineer based in Taipei with experience across crypto exchanges, DeFi DApps, AI learning platforms, and web games. Proficient in React, ethers.js ABI concatenation, RESTful APIs, and third-party LLM platform integrations.
-            </p>
-            <div style={{ display:"flex", flexWrap:"wrap", gap:"8px" }}>
-              {skills.map(s => (
-                <span key={s} style={{
-                  fontFamily:FONT_H, fontSize:"12px", fontWeight:500, letterSpacing:"0.04em",
-                  padding:"6px 16px",
-                  border:`1px solid ${THEME.lavender}80`,
-                  color:THEME.deepPurple,
-                  background:"rgba(255,255,255,0.04)",
-                  borderRadius:"999px",
-                }}>{s}</span>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
     </section>
@@ -969,32 +906,7 @@ function Resume() {
         </div>
 
         <div style={{ marginTop:"40px", maxWidth:"820px" }}>
-          <h3 style={{ fontFamily:FONT_MONO, fontSize:"11px", letterSpacing:"0.22em", color:THEME.coral, margin:"0 0 28px" }}>— EDUCATION</h3>
-          <div className="rv-card spot-card" style={{
-            background:"rgba(255,255,255,0.04)", borderRadius:"20px",
-            border:`1px solid ${THEME.divider}`, padding:"24px 32px",
-            display:"grid", gridTemplateColumns:"160px 1fr", gap:"32px",
-            marginBottom:"16px",
-          }}>
-            <div style={{ fontFamily:FONT_MONO, fontSize:"11px", color:THEME.coral, letterSpacing:"0.06em", paddingTop:"5px" }}>2016 — 2018</div>
-            <div>
-              <div style={{ fontFamily:FONT_H, fontSize:"19px", fontWeight:600, color:THEME.text, marginBottom:"3px" }}>國立中央大學</div>
-              <div style={{ fontFamily:FONT_H, fontSize:"14px", color:THEME.textSoft }}>機械工程學系碩士 · M.Eng. Mechanical Engineering, National Central University</div>
-            </div>
-          </div>
-          <div className="rv-card spot-card" style={{
-            background:"rgba(255,255,255,0.04)", borderRadius:"20px",
-            border:`1px solid ${THEME.divider}`, padding:"24px 32px",
-            display:"grid", gridTemplateColumns:"160px 1fr", gap:"32px",
-          }}>
-            <div style={{ fontFamily:FONT_MONO, fontSize:"11px", color:THEME.coral, letterSpacing:"0.06em", paddingTop:"5px" }}>2012 — 2016</div>
-            <div>
-              <div style={{ fontFamily:FONT_H, fontSize:"19px", fontWeight:600, color:THEME.text, marginBottom:"3px" }}>中原大學</div>
-              <div style={{ fontFamily:FONT_H, fontSize:"14px", color:THEME.textSoft }}>機械工程學系學士 · B.Eng. Mechanical Engineering, Chung Yuan Christian University</div>
-            </div>
-          </div>
-
-          <h3 style={{ fontFamily:FONT_MONO, fontSize:"11px", letterSpacing:"0.22em", color:THEME.coral, margin:"48px 0 28px" }}>— SKILLS</h3>
+          <h3 style={{ fontFamily:FONT_MONO, fontSize:"11px", letterSpacing:"0.22em", color:THEME.coral, margin:"0 0 28px" }}>— SKILLS</h3>
           <div className="rv-card spot-card" style={{
             background:"rgba(255,255,255,0.04)", borderRadius:"20px",
             border:`1px solid ${THEME.divider}`, padding:"24px 32px",
@@ -1016,6 +928,31 @@ function Resume() {
               <div style={{ fontFamily:FONT_BODY, fontSize:"14px", fontWeight:400, lineHeight:1.85, color:THEME.textSoft }}>
                 Cursor · GitHub Copilot · Claude Code
               </div>
+            </div>
+          </div>
+
+          <h3 style={{ fontFamily:FONT_MONO, fontSize:"11px", letterSpacing:"0.22em", color:THEME.coral, margin:"48px 0 28px" }}>— EDUCATION</h3>
+          <div className="rv-card spot-card" style={{
+            background:"rgba(255,255,255,0.04)", borderRadius:"20px",
+            border:`1px solid ${THEME.divider}`, padding:"24px 32px",
+            display:"grid", gridTemplateColumns:"160px 1fr", gap:"32px",
+            marginBottom:"16px",
+          }}>
+            <div style={{ fontFamily:FONT_MONO, fontSize:"11px", color:THEME.coral, letterSpacing:"0.06em", paddingTop:"5px" }}>2016 — 2018</div>
+            <div>
+              <div style={{ fontFamily:FONT_H, fontSize:"19px", fontWeight:600, color:THEME.text, marginBottom:"3px" }}>國立中央大學</div>
+              <div style={{ fontFamily:FONT_H, fontSize:"14px", color:THEME.textSoft }}>機械工程學系碩士 · M.Eng. Mechanical Engineering, National Central University</div>
+            </div>
+          </div>
+          <div className="rv-card spot-card" style={{
+            background:"rgba(255,255,255,0.04)", borderRadius:"20px",
+            border:`1px solid ${THEME.divider}`, padding:"24px 32px",
+            display:"grid", gridTemplateColumns:"160px 1fr", gap:"32px",
+          }}>
+            <div style={{ fontFamily:FONT_MONO, fontSize:"11px", color:THEME.coral, letterSpacing:"0.06em", paddingTop:"5px" }}>2012 — 2016</div>
+            <div>
+              <div style={{ fontFamily:FONT_H, fontSize:"19px", fontWeight:600, color:THEME.text, marginBottom:"3px" }}>中原大學</div>
+              <div style={{ fontFamily:FONT_H, fontSize:"14px", color:THEME.textSoft }}>機械工程學系學士 · B.Eng. Mechanical Engineering, Chung Yuan Christian University</div>
             </div>
           </div>
         </div>
@@ -1133,24 +1070,237 @@ const PORTFOLIO = [
 ];
 
 /* ─── PORTFOLIO ──────────────────────────────────────── */
-function Portfolio({ onOpen }) {
+function Portfolio() {
+  const [expanded, setExpanded] = useState(null);   // project being shown
+  const [phase, setPhase] = useState("closed");     // closed | opening | open | closing
+  const [hoveredIdx, setHoveredIdx] = useState(null); // stack hover — spreads cards below
+  const [autoIdx, setAutoIdx] = useState(null);       // idle light-up cycle
+  const sectionRef = useRef(null);
+
+  /* Take turns lighting cards up while the section is in view and idle */
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    let timer = null;
+    const obs = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !timer) {
+        timer = setInterval(() => {
+          setAutoIdx(i => (i === null ? 0 : (i + 1) % PORTFOLIO.length));
+        }, 2200);
+      } else if (!entry.isIntersecting && timer) {
+        clearInterval(timer); timer = null;
+      }
+    }, { threshold: 0.25 });
+    obs.observe(section);
+    return () => { obs.disconnect(); if (timer) clearInterval(timer); };
+  }, []);
+  const overlayRef = useRef(null);
+  const panelRef   = useRef(null);
+  const headRef    = useRef(null);                  // cover image header inside the panel
+  const originRef  = useRef(null);                  // { rect, el } of source card
+
+  const reduceMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const openFrom = (p, el) => {
+    if (phase !== "closed") return;
+    originRef.current = { rect: el.getBoundingClientRect(), el };
+    el.style.visibility = "hidden";
+    setExpanded(p);
+    setPhase("opening");
+  };
+
+  const requestClose = () => {
+    if (phase !== "open" || !panelRef.current) return;
+    setPhase("closing");
+    const { rect, el } = originRef.current;
+    const d = reduceMotion() ? 0 : 1;
+    gsap.timeline({
+      onComplete: () => { el.style.visibility = ""; setExpanded(null); setPhase("closed"); },
+    })
+      .to(headRef.current, { height: "100%", duration: 0.3 * d, ease: "power2.inOut" })
+      .to(panelRef.current, {
+        left: rect.left, top: rect.top, width: rect.width, height: rect.height,
+        duration: 0.4 * d, ease: "power3.inOut",
+      }, "-=0.1")
+      .to(panelRef.current, { skewY: -8, duration: 0.25 * d, ease: "power2.in" }, "-=0.12")
+      .to(overlayRef.current, { opacity: 0, duration: 0.3 * d }, "-=0.2");
+  };
+
+  /* Expand: straighten skew → grow to centered panel → cover shrinks into a
+     header (shared-element morph, like the expandable-card reference) */
+  useEffect(() => {
+    if (phase !== "opening" || !panelRef.current || !overlayRef.current) return;
+    const { rect } = originRef.current;
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const w = Math.min(1100, vw - 40);
+    const h = Math.min(vh * 0.9, vh - 32);
+    const d = reduceMotion() ? 0 : 1;
+
+    gsap.set(panelRef.current, {
+      left: rect.left, top: rect.top, width: rect.width, height: rect.height,
+      skewY: -8, transformOrigin: "center center",
+    });
+    gsap.set(headRef.current, { height: "100%" });
+    gsap.fromTo(overlayRef.current, { opacity: 0 }, { opacity: 1, duration: 0.35 * d });
+    gsap.timeline({ onComplete: () => setPhase("open") })
+      .to(panelRef.current, { skewY: 0, duration: 0.3 * d, ease: "power2.out" })
+      .to(panelRef.current, {
+        left: (vw - w) / 2, top: (vh - h) / 2, width: w, height: h,
+        duration: 0.5 * d, ease: "power3.inOut",
+      }, "-=0.08")
+      .to(headRef.current, {
+        height: 104,
+        duration: 0.35 * d, ease: "power3.inOut",
+      }, "-=0.05");
+  }, [phase]);
+
+  /* Escape to close + scroll lock while expanded */
+  useEffect(() => {
+    if (!expanded) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = e => { if (e.key === "Escape") requestClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [expanded, phase]);
+
   return (
-    <section id="portfolio" style={{
+    <section id="portfolio" ref={sectionRef} style={{
       background:THEME.tintAbout, padding:"120px clamp(24px,8vw,120px)",
       position:"relative", overflow:"hidden",
     }}>
 
-      <div style={{ maxWidth:"1080px", margin:"0 auto", position:"relative", zIndex:1 }}>
+      <div style={{ maxWidth:"1160px", margin:"0 auto", position:"relative", zIndex:1 }}>
         <SectionTitle en="Portfolio" ja="作品" zh="作品集" />
 
-        <div style={{
-          display:"grid",
-          gridTemplateColumns:"repeat(auto-fill, minmax(300px, 1fr))",
-          gap:"24px", marginTop:"60px",
-        }}>
-          {PORTFOLIO.map(p => <PortfolioCard key={p.slug} p={p} onOpen={onOpen}/>)}
+        {/* Skewed diagonal card stack — click a card to expand it */}
+        <div
+          className="pf-stack"
+          style={{
+            marginTop:"48px",
+            /* reserve room for the diagonal offsets + center the whole stack */
+            minHeight:`${470 + (PORTFOLIO.length - 1) * 96}px`,
+            paddingBottom:"40px",
+            paddingLeft:`max(0px, calc(50% - ${(420 + (PORTFOLIO.length - 1) * 120) / 2}px))`,
+          }}
+          onMouseLeave={() => setHoveredIdx(null)}
+        >
+          {/* oldest first so the newest project lands at the front-right of the stack */}
+          {PORTFOLIO.slice().reverse().map((p, i) => {
+            const spread = hoveredIdx !== null && i > hoveredIdx ? 96 : 0;
+            const lift = hoveredIdx === i ? -16 : 0;
+            /* hover wins; otherwise the idle cycle lights cards up in turn */
+            const focusIdx = hoveredIdx !== null ? hoveredIdx
+              : autoIdx !== null ? autoIdx
+              : PORTFOLIO.length - 1;
+            const focused = i === focusIdx;
+            return (
+              <div
+                key={p.slug}
+                className="pf3d"
+                onMouseEnter={() => setHoveredIdx(i)}
+                style={{
+                  zIndex: hoveredIdx === i ? 20 : i + 1,
+                  transform: `translate(${i * 120}px, ${i * 88 + spread + lift}px) skewY(-8deg)`,
+                  filter: focused ? "none" : "grayscale(0.85) brightness(0.72)",
+                }}
+              >
+                <div className="pf-float" style={{
+                  borderRadius:"22px",
+                  boxShadow: focused ? "0 18px 48px rgba(255,0,200,0.26)" : "none",
+                  transition:"box-shadow 0.5s ease",
+                }}>
+                  <PortfolioCard p={p} onOpen={openFrom} />
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
+
+      {/* Expansion overlay — card morphs into the detail panel */}
+      {expanded && (
+        <div
+          ref={overlayRef}
+          onClick={requestClose}
+          style={{
+            position:"fixed", inset:0, zIndex:1000,
+            background:"rgba(0, 0, 0, 0.72)",
+            backdropFilter:"blur(8px)", WebkitBackdropFilter:"blur(8px)",
+            opacity:0,
+          }}
+        >
+          <div
+            ref={panelRef}
+            onClick={e => e.stopPropagation()}
+            style={{
+              position:"fixed",
+              background:"linear-gradient(180deg, rgba(12,12,12,0.98) 0%, rgba(20,0,26,0.98) 100%)",
+              border:`1px solid ${THEME.divider}`,
+              borderRadius:"24px",
+              overflow:"hidden",
+              boxShadow:"0 24px 80px rgba(255,0,200,0.18)",
+              display:"flex", flexDirection:"column",
+            }}
+          >
+            {/* Cover header — morphs into a compact dark title bar once open */}
+            <div ref={headRef} style={{ position:"relative", width:"100%", height:"100%", flexShrink:0, overflow:"hidden" }}>
+              <img
+                src={expanded.images[0]}
+                alt={expanded.title}
+                style={{
+                  position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover",
+                  opacity: phase === "open" ? 0.1 : 1,
+                  transition:"opacity 0.4s ease",
+                }}
+              />
+              <div style={{
+                position:"absolute", inset:0,
+                background: phase === "open"
+                  ? "linear-gradient(180deg, rgba(8,4,12,0.85) 0%, rgba(10,4,14,0.96) 100%)"
+                  : "linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,0.78) 100%)",
+                transition:"background 0.4s ease",
+                borderBottom:`1px solid ${THEME.divider}`,
+              }}/>
+              <div style={{ position:"absolute", left:"clamp(20px,3vw,40px)", bottom:"16px", right:"70px" }}>
+                <div style={{ fontFamily:FONT_H, fontSize:"clamp(20px,2.6vw,28px)", fontWeight:700, color:"#fff", letterSpacing:"-0.02em", lineHeight:1.15 }}>{expanded.title}</div>
+                <div style={{ fontFamily:FONT_H, fontSize:"clamp(11px,1.4vw,14px)", fontWeight:500, color:THEME.pink, marginTop:"2px" }}>{expanded.en}</div>
+              </div>
+            </div>
+
+            {/* Close button */}
+            <button
+              onClick={requestClose}
+              aria-label="Close"
+              style={{
+                position:"absolute", top:"16px", right:"16px", zIndex:3,
+                width:"40px", height:"40px", borderRadius:"50%",
+                background:"rgba(22,22,22,0.95)",
+                border:`1px solid ${THEME.divider}`,
+                cursor:"pointer",
+                fontFamily:FONT_H, fontSize:"18px", fontWeight:500, color:THEME.deepPurple,
+                display:"flex", alignItems:"center", justifyContent:"center",
+                transition:"background 0.2s, transform 0.2s",
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = THEME.coral; e.currentTarget.style.color = "#fff"; e.currentTarget.style.transform = "rotate(90deg)"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "rgba(22,22,22,0.95)"; e.currentTarget.style.color = THEME.deepPurple; e.currentTarget.style.transform = "none"; }}
+            >×</button>
+
+            {/* Detail content — scrolls under the header */}
+            <div style={{
+              flex:1, minHeight:0,
+              overflow: phase === "open" ? "auto" : "hidden",
+              opacity: phase === "open" ? 1 : 0,
+              transition:"opacity 0.3s ease",
+            }}>
+              <ProjectDetailBody p={expanded} />
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
@@ -1160,18 +1310,18 @@ function PortfolioCard({ p, onOpen }) {
   return (
     <div
       className="pf-card spot-card"
-      onClick={() => onOpen(p)}
+      onClick={e => onOpen(p, e.currentTarget.closest(".pf3d"))}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       role="button" tabIndex={0}
-      onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen(p); } }}
+      onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen(p, e.currentTarget.closest(".pf3d")); } }}
       style={{
-        background:"rgba(255,255,255,0.05)",
+        background: hov ? "#16101d" : "rgba(20, 13, 27, 0.92)",
         border:`1px solid ${hov ? THEME.lavender : THEME.divider}`,
         borderRadius:"22px",
         overflow:"hidden",
         cursor:"pointer",
-        transition:"transform 0.3s, box-shadow 0.3s, border-color 0.3s",
+        transition:"transform 0.3s, box-shadow 0.3s, border-color 0.3s, background 0.3s",
         transform: hov ? "translateY(-4px)" : "none",
         boxShadow: hov
           ? `0 16px 40px ${THEME.lavender}33`
@@ -1184,30 +1334,16 @@ function PortfolioCard({ p, onOpen }) {
         overflow:"hidden",
         background:`linear-gradient(135deg, ${THEME.lavender}22 0%, rgba(0,0,0,0.4) 55%, ${THEME.coral}18 100%)`,
       }}>
-        {/* image revealed on hover only */}
         <img
           src={p.images[0]}
           alt={p.title}
           loading="lazy"
           style={{
             width:"100%", height:"100%", objectFit:"cover",
-            transition:"opacity 0.45s ease, transform 0.5s ease",
-            opacity: hov ? 1 : 0,
+            transition:"transform 0.5s ease",
             transform: hov ? "scale(1.04)" : "scale(1)",
           }}
         />
-        {/* resting state — project name over dark gradient */}
-        <div style={{
-          position:"absolute", inset:0,
-          display:"flex", alignItems:"center", justifyContent:"center",
-          opacity: hov ? 0 : 1, transition:"opacity 0.35s ease",
-          pointerEvents:"none",
-        }}>
-          <span style={{
-            fontFamily:FONT_MONO, fontSize:"13px", letterSpacing:"0.3em",
-            textTransform:"uppercase", color:"rgba(255,255,255,0.55)",
-          }}>{p.title}</span>
-        </div>
         <div style={{
           position:"absolute", inset:0,
           background: hov ? `linear-gradient(180deg, rgba(63,49,96,0) 50%, rgba(63,49,96,0.35) 100%)` : "transparent",
@@ -1283,90 +1419,21 @@ function PortfolioCard({ p, onOpen }) {
 }
 
 /* ─── PROJECT DETAIL MODAL ───────────────────────────── */
-function ProjectModal({ project, onClose }) {
+function ProjectDetailBody({ p }) {
   const [idx, setIdx] = useState(0);
 
   useEffect(() => {
-    if (!project) return;
     setIdx(0);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
     const onKey = e => {
-      if (e.key === "Escape") onClose();
-      if (e.key === "ArrowRight") setIdx(i => Math.min(i + 1, project.images.length - 1));
+      if (e.key === "ArrowRight") setIdx(i => Math.min(i + 1, p.images.length - 1));
       if (e.key === "ArrowLeft")  setIdx(i => Math.max(i - 1, 0));
     };
     window.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = prev;
-      window.removeEventListener("keydown", onKey);
-    };
-  }, [project, onClose]);
-
-  if (!project) return null;
-  const p = project;
+    return () => window.removeEventListener("keydown", onKey);
+  }, [p]);
 
   return (
-    <div
-      onClick={onClose}
-      style={{
-        position:"fixed", inset:0, zIndex:1000,
-        background:"rgba(0, 0, 0, 0.72)",
-        backdropFilter:"blur(8px)", WebkitBackdropFilter:"blur(8px)",
-        display:"flex", alignItems:"center", justifyContent:"center",
-        padding:"clamp(16px, 4vw, 48px)",
-        animation:"fadeIn 0.25s ease",
-      }}
-    >
-      <div
-        className="modal-panel"
-        onClick={e => e.stopPropagation()}
-        style={{
-          background:"linear-gradient(180deg, rgba(12,12,12,0.98) 0%, rgba(20,0,26,0.98) 100%)",
-          borderRadius:"28px",
-          maxWidth:"1100px", width:"100%",
-          maxHeight:"90vh", overflow:"auto",
-          boxShadow:"0 24px 80px rgba(255,0,200,0.18)",
-          border:`1px solid ${THEME.divider}`,
-          position:"relative",
-          animation:"modalPop 0.42s cubic-bezier(0.22,1,0.36,1)",
-        }}
-      >
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          aria-label="Close"
-          style={{
-            position:"sticky", top:"16px", marginLeft:"auto", marginRight:"16px", marginTop:"16px",
-            float:"right", zIndex:2,
-            width:"40px", height:"40px", borderRadius:"50%",
-            background:"rgba(22,22,22,0.95)",
-            border:`1px solid ${THEME.divider}`,
-            cursor:"pointer",
-            fontFamily:FONT_H, fontSize:"18px", fontWeight:500, color:THEME.deepPurple,
-            display:"flex", alignItems:"center", justifyContent:"center",
-            transition:"background 0.2s, transform 0.2s",
-            boxShadow:"0 4px 12px rgba(63,49,96,0.15)",
-          }}
-          onMouseEnter={e => { e.currentTarget.style.background = THEME.coral; e.currentTarget.style.color = "#fff"; e.currentTarget.style.transform = "rotate(90deg)"; }}
-          onMouseLeave={e => { e.currentTarget.style.background = "rgba(22,22,22,0.95)"; e.currentTarget.style.color = THEME.deepPurple; e.currentTarget.style.transform = "none"; }}
-        >×</button>
-
-        <div style={{ padding:"clamp(28px, 4vw, 56px)", paddingTop:"24px" }}>
-          {/* Header */}
-          <div style={{ marginBottom:"24px", maxWidth:"calc(100% - 60px)" }}>
-            <div style={{ fontFamily:FONT_MONO, fontSize:"11px", letterSpacing:"0.22em", color:THEME.coral, marginBottom:"10px" }}>
-              — PROJECT
-            </div>
-            <h2 style={{
-              fontFamily:FONT_H, fontSize:"clamp(28px, 4.5vw, 44px)", fontWeight:700,
-              color:THEME.text, letterSpacing:"-0.03em", lineHeight:1.1, marginBottom:"8px",
-            }}>{p.title}</h2>
-            <div style={{ fontFamily:FONT_H, fontSize:"clamp(14px, 1.8vw, 18px)", fontWeight:500, color:THEME.deepPurple, letterSpacing:"0.02em" }}>
-              {p.en}
-            </div>
-          </div>
-
+    <div style={{ padding:"clamp(28px, 4vw, 56px)", paddingTop:"32px" }}>
           {/* Main image */}
           <div style={{
             width:"100%", aspectRatio:"16/10",
@@ -1509,8 +1576,6 @@ function ProjectModal({ project, onClose }) {
               )}
             </div>
           )}
-        </div>
-      </div>
     </div>
   );
 }
@@ -1605,11 +1670,10 @@ function SectionTitle({ en, ja, zh }) {
 
 /* ─── APP ────────────────────────────────────────────── */
 function App() {
-  const [activeSection, setActiveSection] = useState("about");
-  const [openProject, setOpenProject] = useState(null);
+  const [activeSection, setActiveSection] = useState("resume");
 
   useEffect(() => {
-    const ids = ["about","resume","portfolio","contact"];
+    const ids = ["resume","portfolio","contact"];
     const obs = new IntersectionObserver(entries => {
       entries.forEach(e => { if (e.isIntersecting) setActiveSection(e.target.id); });
     }, { threshold:0.35 });
@@ -1733,6 +1797,27 @@ function App() {
         });
       });
 
+      /* Portfolio stack — gentle float on inner layer (React owns the outer
+         translate/skew, so GSAP only ever touches .pf-float) */
+      const floats = gsap.utils.toArray(".pf-float");
+      if (floats.length) {
+        const float = gsap.to(floats, {
+          y: -6,
+          duration: 1.9,
+          ease: "sine.inOut",
+          yoyo: true,
+          repeat: -1,
+          stagger: { each: 0.28, repeat: -1, yoyo: true },
+          paused: true,
+        });
+        ScrollTrigger.create({
+          trigger: "#portfolio",
+          start: "top 85%",
+          end: "bottom 15%",
+          onToggle: (self) => (self.isActive ? float.play() : float.pause()),
+        });
+      }
+
       /* Scroll progress bar */
       gsap.to("#scroll-progress", {
         scaleX: 1,
@@ -1752,11 +1837,9 @@ function App() {
       <Nav activeSection={activeSection} />
       <ShaderIntro />
       <Hero />
-      <About />
       <Resume />
-      <Portfolio onOpen={setOpenProject} />
+      <Portfolio />
       <Contact />
-      <ProjectModal project={openProject} onClose={() => setOpenProject(null)} />
     </div>
   );
 }
